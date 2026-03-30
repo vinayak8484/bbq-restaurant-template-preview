@@ -14,7 +14,7 @@
 These are preview versions for demonstration purposes only.
 The full, clean versions are available for purchase on Gumroad.
 
-👉 Buy the full bundle on Gumroad: https://vinayakganiger.gumroad.com/l/[LINK]
+👉 Buy the full bundle on Gumroad: https://vinayakganiger.gumroad.com/l/qetfbl
 
 ──────────────────────────────────────────────────────────────
   WHAT IS IN THE FOLDER

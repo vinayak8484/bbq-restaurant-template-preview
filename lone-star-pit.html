@@ -1,0 +1,1355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lone Star Pit — Texas BBQ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&family=Playfair+Display:ital@1&display=swap" rel="stylesheet">
+<style>
+/* ===== RESET ===== */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+img{max-width:100%;display:block}
+a{text-decoration:none;color:inherit}
+button{cursor:pointer;border:none;background:none;font-family:inherit}
+
+/* ===== VARIABLES — LIGHT (DEFAULT) ===== */
+:root{
+  --rust:    #B7410E;
+  --gold:    #D4891A;
+  --tan:     #C9A87C;
+  --cream:   #F8F1E4;
+  --brown:   #3B1F0A;
+  --darkbg:  #1C1008;
+  --darkcard:#261507;
+  --muted:   #7A6652;
+
+  --bg:      var(--cream);
+  --card:    #FFFFFF;
+  --text:    var(--brown);
+  --sub:     var(--muted);
+  --border:  rgba(59,31,10,0.12);
+  --nav-bg:  rgba(248,241,228,0.95);
+}
+
+/* ===== DARK MODE ===== */
+body.dark-mode{
+  --bg:     var(--darkbg);
+  --card:   var(--darkcard);
+  --text:   #F0E8DC;
+  --sub:    #A9917B;
+  --border: rgba(255,255,255,0.08);
+  --nav-bg: rgba(28,16,8,0.96);
+}
+
+/* ===== BASE ===== */
+body{
+  font-family:'DM Sans',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  transition:background .3s,color .3s;
+  overflow-x:hidden;
+}
+
+/* ===== LOADER ===== */
+#loader{
+  position:fixed;inset:0;z-index:9999;
+  background:var(--darkbg);
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:24px;
+}
+.loader-brand{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(2rem,6vw,3.5rem);
+  letter-spacing:.12em;
+  color:#F0E8DC;
+}
+.loader-brand span{color:var(--rust);}
+.lonestar-anim{display:flex;align-items:flex-end;gap:6px;}
+.ls-bar{
+  width:10px;border-radius:3px 3px 0 0;
+  background:linear-gradient(to top, var(--rust), var(--gold));
+  animation:lsFlame 1.1s ease-in-out infinite;
+}
+.ls-bar:nth-child(1){height:20px;animation-delay:0s;}
+.ls-bar:nth-child(2){height:34px;animation-delay:.15s;}
+.ls-bar:nth-child(3){height:50px;animation-delay:.3s;}
+.ls-bar:nth-child(4){height:34px;animation-delay:.45s;}
+.ls-bar:nth-child(5){height:20px;animation-delay:.6s;}
+@keyframes lsFlame{
+  0%,100%{transform:scaleY(1);opacity:.7;}
+  50%{transform:scaleY(1.4);opacity:1;}
+}
+#loader.hidden{opacity:0;pointer-events:none;transition:opacity .5s;}
+
+/* ===== NAVBAR ===== */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  background:var(--nav-bg);
+  backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--border);
+  transition:background .3s, box-shadow .3s;
+}
+nav.scrolled{box-shadow:0 2px 20px rgba(0,0,0,.15);}
+.nav-inner{
+  max-width:1200px;margin:0 auto;
+  padding:0 24px;height:64px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.nav-logo{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:1.6rem;letter-spacing:.1em;color:var(--text);
+}
+.nav-logo span{color:var(--rust);}
+.nav-links{display:flex;gap:32px;list-style:none;}
+.nav-links a{
+  font-size:.85rem;font-weight:600;
+  letter-spacing:.06em;text-transform:uppercase;
+  color:var(--sub);
+  transition:color .2s;
+}
+.nav-links a:hover{color:var(--rust);}
+.nav-actions{display:flex;align-items:center;gap:12px;}
+.btn-mode{
+  width:38px;height:38px;border-radius:50%;
+  background:var(--card);border:1px solid var(--border);
+  font-size:1.1rem;display:flex;align-items:center;justify-content:center;
+  transition:background .2s,border .2s;
+}
+.btn-mode:hover{background:var(--rust);color:#fff;}
+.btn-reserve{
+  padding:9px 20px;border-radius:4px;
+  background:var(--rust);color:#fff;
+  font-size:.82rem;font-weight:700;
+  letter-spacing:.08em;text-transform:uppercase;
+  transition:background .2s,transform .1s;
+}
+.btn-reserve:hover{background:var(--gold);}
+.hamburger{display:none;flex-direction:column;gap:5px;padding:4px;}
+.hamburger span{width:22px;height:2px;background:var(--text);border-radius:2px;transition:.3s;}
+.mobile-menu{
+  display:none;position:fixed;top:64px;left:0;right:0;
+  background:var(--nav-bg);backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--border);
+  flex-direction:column;padding:16px 24px 24px;z-index:99;
+}
+.mobile-menu.open{display:flex;}
+.mobile-menu a{
+  padding:12px 0;font-size:.9rem;font-weight:600;
+  text-transform:uppercase;letter-spacing:.06em;
+  color:var(--text);border-bottom:1px solid var(--border);
+}
+.mobile-menu a:last-child{border-bottom:none;}
+
+/* ===== HERO ===== */
+.hero{
+  position:relative;min-height:100vh;
+  display:flex;align-items:center;justify-content:center;
+  text-align:center;overflow:hidden;
+}
+.hero-bg{
+  position:absolute;inset:0;
+  background-image:url('https://images.unsplash.com/photo-1529193591184-b1d58069ecdd?w=1600&auto=format&fit=crop&q=80');
+  background-size:cover;background-position:center;
+  filter:brightness(.4);
+}
+.hero-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(to bottom, rgba(28,16,8,.3) 0%, rgba(28,16,8,.7) 100%);
+}
+.hero-content{position:relative;z-index:1;padding:0 24px;max-width:900px;}
+.hero-badge{
+  display:inline-block;margin-bottom:20px;
+  padding:6px 18px;border:1px solid var(--gold);border-radius:2px;
+  font-size:.72rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--gold);
+}
+.hero-title{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(3.5rem,10vw,8rem);
+  line-height:1;letter-spacing:.06em;
+  color:#F0E8DC;margin-bottom:8px;
+}
+.hero-title em{
+  font-family:'Bebas Neue',sans-serif;
+  font-style:normal;color:var(--rust);
+}
+.hero-sub{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(1rem,2.5vw,1.5rem);
+  font-style:italic;color:var(--tan);
+  margin-bottom:20px;
+}
+.hero-tagline{
+  font-size:.9rem;letter-spacing:.1em;text-transform:uppercase;
+  color:rgba(240,232,220,.7);margin-bottom:40px;
+}
+.hero-ctas{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;}
+.cta-primary{
+  padding:14px 36px;background:var(--rust);color:#fff;
+  font-size:.85rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  border-radius:3px;transition:background .2s;
+}
+.cta-primary:hover{background:var(--gold);}
+.cta-secondary{
+  padding:14px 36px;border:2px solid rgba(240,232,220,.5);color:#F0E8DC;
+  font-size:.85rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  border-radius:3px;transition:border-color .2s,color .2s;
+}
+.cta-secondary:hover{border-color:var(--gold);color:var(--gold);}
+.hero-scroll{
+  position:absolute;bottom:32px;left:50%;transform:translateX(-50%);
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  color:rgba(240,232,220,.5);font-size:.75rem;letter-spacing:.1em;text-transform:uppercase;
+}
+.hero-scroll::after{
+  content:'';display:block;width:1px;height:40px;
+  background:linear-gradient(to bottom,rgba(240,232,220,.4),transparent);
+}
+
+/* ===== SECTIONS ===== */
+section{padding:80px 24px;}
+.section-inner{max-width:1200px;margin:0 auto;}
+.section-label{
+  font-size:.72rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--rust);margin-bottom:12px;
+}
+.section-title{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(2rem,5vw,3.2rem);
+  letter-spacing:.06em;color:var(--text);margin-bottom:8px;
+}
+.section-sub{
+  font-size:1rem;line-height:1.7;color:var(--sub);
+  max-width:560px;
+}
+
+/* ===== STORY / ABOUT ===== */
+.about-grid{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:64px;align-items:center;
+}
+.about-img-wrap{position:relative;}
+.about-img-wrap img{
+  width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:2px;
+}
+.about-badge{
+  position:absolute;bottom:-24px;right:-24px;
+  width:110px;height:110px;border-radius:50%;
+  background:var(--rust);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:2px;
+}
+.about-badge .yr{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:1.8rem;line-height:1;color:#fff;letter-spacing:.06em;
+}
+.about-badge .since{
+  font-size:.6rem;font-weight:700;letter-spacing:.12em;
+  text-transform:uppercase;color:rgba(255,255,255,.8);
+}
+.about-text p{
+  font-size:1rem;line-height:1.85;color:var(--sub);margin-bottom:16px;
+}
+.about-stats{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:24px;margin-top:40px;
+  padding-top:40px;border-top:1px solid var(--border);
+}
+.stat-val{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:2.2rem;letter-spacing:.06em;color:var(--rust);
+}
+.stat-label{font-size:.8rem;color:var(--sub);letter-spacing:.06em;text-transform:uppercase;}
+
+/* ===== PITS SHOWCASE ===== */
+.pits-section{background:var(--card);}
+.pits-grid{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  gap:2px;margin-top:48px;
+}
+.pit-card{
+  position:relative;overflow:hidden;
+  aspect-ratio:3/4;
+}
+.pit-card img{
+  width:100%;height:100%;object-fit:cover;
+  transition:transform .5s ease;
+}
+.pit-card:hover img{transform:scale(1.06);}
+.pit-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(to top,rgba(28,16,8,.92) 0%,rgba(28,16,8,.1) 60%);
+  display:flex;flex-direction:column;justify-content:flex-end;padding:24px;
+}
+.pit-name{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:1.6rem;letter-spacing:.06em;color:#F0E8DC;
+  margin-bottom:4px;
+}
+.pit-detail{font-size:.78rem;color:var(--tan);margin-bottom:8px;}
+.pit-tag{
+  display:inline-block;padding:3px 10px;
+  background:var(--rust);border-radius:2px;
+  font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  color:#fff;
+}
+
+/* ===== MENU ===== */
+.menu-section{background:var(--bg);}
+.menu-tabs{
+  display:flex;gap:0;border-bottom:2px solid var(--border);
+  margin-bottom:48px;overflow-x:auto;
+}
+.tab-btn{
+  padding:14px 28px;font-size:.82rem;font-weight:700;
+  letter-spacing:.1em;text-transform:uppercase;
+  color:var(--sub);border-bottom:2px solid transparent;
+  margin-bottom:-2px;transition:color .2s,border-color .2s;
+  white-space:nowrap;
+}
+.tab-btn.active{color:var(--rust);border-bottom-color:var(--rust);}
+.tab-btn:hover:not(.active){color:var(--text);}
+.tab-panel{display:none;}
+.tab-panel.active{display:block;}
+.menu-grid{
+  display:grid;grid-template-columns:repeat(2,1fr);
+  gap:2px;
+}
+.menu-item{
+  background:var(--card);padding:28px;
+  display:flex;gap:20px;
+  border:1px solid var(--border);
+  transition:border-color .2s;
+}
+.menu-item:hover{border-color:var(--rust);}
+.menu-item img{
+  width:88px;height:88px;object-fit:cover;
+  border-radius:2px;flex-shrink:0;
+}
+.item-info{flex:1;}
+.item-name{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:1.1rem;letter-spacing:.04em;
+  color:var(--text);margin-bottom:4px;
+}
+.item-desc{font-size:.83rem;line-height:1.6;color:var(--sub);margin-bottom:10px;}
+.item-price{
+  font-size:.9rem;font-weight:700;color:var(--rust);
+}
+.item-badge{
+  display:inline-block;margin-left:8px;
+  padding:2px 8px;background:var(--gold);border-radius:2px;
+  font-size:.65rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  color:#fff;vertical-align:middle;
+}
+
+/* ===== THE BOARD ===== */
+.board-section{background:var(--darkbg);padding:80px 24px;}
+.board-inner{max-width:1200px;margin:0 auto;}
+.board-header{text-align:center;margin-bottom:48px;}
+.board-header .section-label{color:var(--gold);}
+.board-header .section-title{color:#F0E8DC;}
+.board-header .section-sub{color:var(--tan);margin:0 auto;}
+.board-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;}
+.board-card{
+  background:var(--darkcard);padding:36px 28px;
+  border-top:3px solid transparent;
+  transition:border-color .2s,transform .2s;
+}
+.board-card:hover{border-top-color:var(--rust);transform:translateY(-4px);}
+.board-card.featured{border-top-color:var(--gold);}
+.board-icon{font-size:2rem;margin-bottom:16px;}
+.board-title{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:1.5rem;letter-spacing:.06em;
+  color:#F0E8DC;margin-bottom:8px;
+}
+.board-desc{font-size:.85rem;line-height:1.7;color:var(--tan);margin-bottom:20px;}
+.board-detail{
+  font-size:.78rem;font-weight:600;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--gold);
+}
+
+/* ===== SPECIALS ===== */
+.specials-section{background:var(--card);}
+.specials-grid{
+  display:grid;grid-template-columns:repeat(2,1fr);
+  gap:24px;margin-top:48px;
+}
+.special-card{
+  background:var(--bg);padding:32px;
+  border:1px solid var(--border);border-radius:2px;
+  display:flex;gap:20px;
+  transition:border-color .2s,box-shadow .2s;
+}
+.special-card:hover{
+  border-color:var(--rust);
+  box-shadow:0 4px 20px rgba(183,65,14,.1);
+}
+.special-day{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:1rem;letter-spacing:.08em;color:var(--rust);
+  background:rgba(183,65,14,.1);padding:6px 12px;
+  border-radius:2px;height:fit-content;white-space:nowrap;
+}
+.special-info{}
+.special-name{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:1.2rem;letter-spacing:.04em;
+  color:var(--text);margin-bottom:6px;
+}
+.special-desc{font-size:.85rem;line-height:1.6;color:var(--sub);}
+.special-price{
+  font-size:.9rem;font-weight:700;color:var(--gold);
+  margin-top:10px;
+}
+
+/* ===== PITMASTER ===== */
+.pitmaster-section{background:var(--bg);}
+.pitmaster-grid{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:64px;align-items:center;
+}
+.pitmaster-img{
+  position:relative;
+}
+.pitmaster-img img{
+  width:100%;aspect-ratio:1;object-fit:cover;border-radius:2px;
+}
+.pitmaster-ribbon{
+  position:absolute;top:24px;left:-12px;
+  background:var(--rust);color:#fff;
+  padding:8px 20px 8px 16px;
+  font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  clip-path:polygon(0 0,100% 0,calc(100% - 8px) 50%,100% 100%,0 100%);
+}
+.pitmaster-text .section-sub{max-width:100%;}
+.pitmaster-text p{
+  font-size:1rem;line-height:1.85;color:var(--sub);margin-bottom:16px;
+}
+.pitmaster-creds{
+  display:flex;flex-direction:column;gap:12px;
+  margin-top:32px;
+}
+.cred-item{
+  display:flex;align-items:center;gap:12px;
+  padding:14px;background:var(--card);
+  border:1px solid var(--border);border-radius:2px;
+}
+.cred-icon{font-size:1.2rem;}
+.cred-text{font-size:.85rem;color:var(--sub);line-height:1.5;}
+.cred-text strong{color:var(--text);}
+
+/* ===== GALLERY ===== */
+.gallery-section{background:var(--card);padding:80px 0;}
+.gallery-label{
+  font-size:.72rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--rust);margin-bottom:12px;text-align:center;
+}
+.gallery-title{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(2rem,5vw,3.2rem);
+  letter-spacing:.06em;color:var(--text);
+  text-align:center;margin-bottom:48px;
+}
+.gallery-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  grid-template-rows:250px 250px;
+  gap:2px;
+}
+.gallery-item{overflow:hidden;}
+.gallery-item:nth-child(1){grid-column:span 2;grid-row:span 2;}
+.gallery-item img{width:100%;height:100%;object-fit:cover;transition:transform .5s;}
+.gallery-item:hover img{transform:scale(1.05);}
+
+/* ===== REVIEWS ===== */
+.reviews-section{background:var(--bg);}
+.reviews-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:24px;margin-top:48px;
+}
+.review-card{
+  background:var(--card);padding:32px;
+  border:1px solid var(--border);border-radius:2px;
+}
+.review-stars{font-size:1rem;margin-bottom:16px;}
+.review-text{
+  font-size:.9rem;line-height:1.75;color:var(--sub);
+  margin-bottom:20px;
+  font-style:italic;
+}
+.review-author{
+  display:flex;align-items:center;gap:12px;
+}
+.review-avatar{
+  width:40px;height:40px;border-radius:50%;
+  background:var(--rust);
+  font-family:'Bebas Neue',sans-serif;
+  font-size:1.1rem;color:#fff;
+  display:flex;align-items:center;justify-content:center;
+}
+.reviewer-name{font-size:.85rem;font-weight:700;color:var(--text);}
+.reviewer-info{font-size:.75rem;color:var(--sub);}
+
+/* ===== RESERVATION ===== */
+#reservation{background:var(--darkbg);padding:80px 24px;}
+.res-inner{max-width:800px;margin:0 auto;text-align:center;}
+.res-inner .section-label{color:var(--gold);}
+.res-inner .section-title{color:#F0E8DC;margin-bottom:12px;}
+.res-inner .section-sub{color:var(--tan);margin:0 auto 40px;}
+.res-form{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:16px;text-align:left;
+}
+.form-group{display:flex;flex-direction:column;gap:6px;}
+.form-group.full{grid-column:span 2;}
+.form-group label{
+  font-size:.75rem;font-weight:700;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--tan);
+}
+.form-group input,
+.form-group select,
+.form-group textarea{
+  padding:12px 16px;
+  background:var(--darkcard);
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:2px;color:#F0E8DC;
+  font-size:.9rem;font-family:'DM Sans',sans-serif;
+  transition:border-color .2s;
+}
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus{
+  outline:none;border-color:var(--rust);
+}
+.form-group select option{background:var(--darkcard);}
+.form-group textarea{resize:vertical;min-height:100px;}
+.btn-submit{
+  grid-column:span 2;
+  padding:16px;background:var(--rust);color:#fff;
+  font-size:.85rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+  border-radius:3px;transition:background .2s;
+  margin-top:8px;
+}
+.btn-submit:hover{background:var(--gold);}
+
+/* ===== INFO STRIP ===== */
+.info-strip{
+  background:var(--rust);
+  padding:48px 24px;
+}
+.info-inner{
+  max-width:1200px;margin:0 auto;
+  display:grid;grid-template-columns:repeat(4,1fr);
+  gap:32px;
+}
+.info-block{}
+.info-icon{font-size:1.4rem;margin-bottom:10px;}
+.info-label{
+  font-size:.68rem;font-weight:700;letter-spacing:.14em;
+  text-transform:uppercase;color:rgba(255,255,255,.65);
+  margin-bottom:6px;
+}
+.info-value{font-size:.95rem;font-weight:600;color:#fff;line-height:1.5;}
+
+/* ===== FOOTER ===== */
+footer{
+  background:var(--darkbg);
+  padding:48px 24px 24px;
+  border-top:1px solid rgba(255,255,255,.06);
+}
+.footer-inner{
+  max-width:1200px;margin:0 auto;
+}
+.footer-top{
+  display:grid;grid-template-columns:2fr 1fr 1fr;
+  gap:48px;margin-bottom:48px;
+}
+.footer-logo{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:1.8rem;letter-spacing:.1em;color:#F0E8DC;
+  margin-bottom:12px;
+}
+.footer-logo span{color:var(--rust);}
+.footer-tagline{font-size:.85rem;line-height:1.7;color:var(--muted);max-width:300px;}
+.footer-heading{
+  font-size:.72rem;font-weight:700;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--rust);
+  margin-bottom:16px;
+}
+.footer-links{list-style:none;display:flex;flex-direction:column;gap:10px;}
+.footer-links a{font-size:.85rem;color:var(--muted);transition:color .2s;}
+.footer-links a:hover{color:#F0E8DC;}
+.footer-bottom{
+  padding-top:24px;border-top:1px solid rgba(255,255,255,.06);
+  display:flex;justify-content:space-between;align-items:center;
+  flex-wrap:wrap;gap:12px;
+}
+.footer-copy{font-size:.78rem;color:var(--muted);}
+.footer-credit{font-size:.72rem;color:rgba(255,255,255,.25);}
+
+/* ===== FLOAT CTA ===== */
+.float-cta{
+  position:fixed;bottom:28px;right:28px;z-index:90;
+  padding:14px 28px;background:var(--rust);color:#fff;
+  font-size:.8rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  border-radius:3px;box-shadow:0 4px 20px rgba(183,65,14,.35);
+  transition:opacity .3s,transform .3s,background .2s;
+}
+.float-cta:hover{background:var(--gold);}
+.float-cta.hidden{opacity:0;pointer-events:none;transform:translateY(10px);}
+
+/* ===== SCROLL REVEAL ===== */
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .6s,transform .6s;}
+.reveal.visible{opacity:1;transform:none;}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:900px){
+  .nav-links{display:none;}
+  .btn-reserve{display:none;}
+  .hamburger{display:flex;}
+  .about-grid,.pitmaster-grid{grid-template-columns:1fr;gap:40px;}
+  .about-badge{right:8px;bottom:-16px;}
+  .pits-grid{grid-template-columns:repeat(2,1fr);}
+  .board-grid{grid-template-columns:1fr;}
+  .specials-grid{grid-template-columns:1fr;}
+  .gallery-grid{grid-template-columns:repeat(2,1fr);grid-template-rows:auto;}
+  .gallery-item:nth-child(1){grid-column:span 2;grid-row:span 1;}
+  .reviews-grid{grid-template-columns:1fr;}
+  .res-form{grid-template-columns:1fr;}
+  .form-group.full,.btn-submit{grid-column:span 1;}
+  .info-inner{grid-template-columns:repeat(2,1fr);}
+  .footer-top{grid-template-columns:1fr;}
+  .footer-bottom{flex-direction:column;text-align:center;}
+}
+@media(max-width:580px){
+  .pits-grid{grid-template-columns:1fr;}
+  .menu-grid{grid-template-columns:1fr;}
+  .info-inner{grid-template-columns:1fr;}
+  .hero-ctas{flex-direction:column;align-items:center;}
+  .float-cta{display:none;}
+}
+</style>
+</head>
+<body>
+
+<!-- LOADER -->
+<div id="loader">
+  <div class="loader-brand"><span>LONE</span> STAR PIT</div>
+  <div class="lonestar-anim">
+    <div class="ls-bar"></div>
+    <div class="ls-bar"></div>
+    <div class="ls-bar"></div>
+    <div class="ls-bar"></div>
+    <div class="ls-bar"></div>
+  </div>
+</div>
+
+<!-- NAVBAR -->
+<nav id="navbar">
+  <div class="nav-inner">
+    <div class="nav-logo"><span>LONE</span> STAR PIT</div>
+    <ul class="nav-links">
+      <li><a href="#about">Our Story</a></li>
+      <li><a href="#pits">The Pits</a></li>
+      <li><a href="#menu">Menu</a></li>
+      <li><a href="#board">The Board</a></li>
+      <li><a href="#specials">Specials</a></li>
+      <li><a href="#reservation">Reserve</a></li>
+    </ul>
+    <div class="nav-actions">
+      <button class="btn-mode" id="modeBtn" title="Toggle dark mode">🌙</button>
+      <a href="#reservation" class="btn-reserve">Book a Table</a>
+      <button class="hamburger" id="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</nav>
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#about" onclick="closeMobile()">Our Story</a>
+  <a href="#pits" onclick="closeMobile()">The Pits</a>
+  <a href="#menu" onclick="closeMobile()">Menu</a>
+  <a href="#board" onclick="closeMobile()">The Board</a>
+  <a href="#specials" onclick="closeMobile()">Specials</a>
+  <a href="#reservation" onclick="closeMobile()">Reserve</a>
+</div>
+
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="hero-bg"></div>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <div class="hero-badge">Llano, Texas &bull; Since 1979</div>
+    <h1 class="hero-title"><em>LONE STAR</em><br>PIT</h1>
+    <p class="hero-sub">Central Texas Barbecue, Done Right</p>
+    <p class="hero-tagline">Post Oak Wood &bull; No Sauce Required &bull; Open Til It's Gone</p>
+    <div class="hero-ctas">
+      <a href="#menu" class="cta-primary">See the Menu</a>
+      <a href="#board" class="cta-secondary">Today's Board</a>
+    </div>
+  </div>
+  <div class="hero-scroll">Scroll</div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="section-inner">
+    <div class="about-grid">
+      <div class="about-img-wrap reveal">
+        <img src="https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=700&auto=format&fit=crop&q=80" alt="Pitmaster at work" loading="lazy">
+        <div class="about-badge">
+          <div class="yr">1979</div>
+          <div class="since">Since</div>
+        </div>
+      </div>
+      <div class="about-text reveal">
+        <div class="section-label">Our Story</div>
+        <h2 class="section-title">Central Texas<br>Since 1979</h2>
+        <p class="section-sub" style="max-width:100%;margin-bottom:16px;">Lone Star Pit was born from a single offset smoker on Roy Caldwell's ranch outside Llano. Roy believed beef needed nothing but smoke, salt, and time. Forty-five years later, that belief still runs the show.</p>
+        <p class="about-text" style="font-size:1rem;line-height:1.85;color:var(--sub);margin-bottom:16px;">We smoke over post oak wood cut from the Hill Country. No gas assist. No shortcuts. Brisket goes on at 4 AM and comes off when it's done. That can mean fourteen hours, that can mean eighteen. The smoke decides.</p>
+        <p style="font-size:1rem;line-height:1.85;color:var(--sub);">If you pull up and the sign says "Sold Out," it means we did our job. Come back tomorrow, or come earlier. The early riser gets the brisket.</p>
+        <div class="about-stats">
+          <div>
+            <div class="stat-val">45+</div>
+            <div class="stat-label">Years Smoking</div>
+          </div>
+          <div>
+            <div class="stat-val">400lb</div>
+            <div class="stat-label">Brisket Per Week</div>
+          </div>
+          <div>
+            <div class="stat-val">14h+</div>
+            <div class="stat-label">Smoke Time</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PITS SHOWCASE -->
+<section class="pits-section" id="pits">
+  <div class="section-inner">
+    <div class="section-label">Straight from the Smoker</div>
+    <h2 class="section-title">The Pits</h2>
+    <p class="section-sub">Four offset smokers. Post oak only. Everything you see below was on the fire this morning.</p>
+    <div class="pits-grid">
+      <div class="pit-card reveal">
+        <img src="https://images.unsplash.com/photo-1529193591184-b1d58069ecdd?w=600&auto=format&fit=crop&q=80" alt="Smoked Brisket" loading="lazy">
+        <div class="pit-overlay">
+          <div class="pit-name">Brisket</div>
+          <div class="pit-detail">Post Oak &bull; 14-18 hrs</div>
+          <div class="pit-tag">Central Texas Style</div>
+        </div>
+      </div>
+      <div class="pit-card reveal">
+        <img src="https://images.unsplash.com/photo-1544025162-d76694265947?w=600&auto=format&fit=crop&q=80" alt="Beef Ribs" loading="lazy">
+        <div class="pit-overlay">
+          <div class="pit-name">Beef Ribs</div>
+          <div class="pit-detail">Post Oak &bull; 8-10 hrs</div>
+          <div class="pit-tag">Dinosaur Ribs</div>
+        </div>
+      </div>
+      <div class="pit-card reveal">
+        <img src="https://images.unsplash.com/photo-1600891964092-4316c288032e?w=600&auto=format&fit=crop&q=80" alt="Pork Ribs" loading="lazy">
+        <div class="pit-overlay">
+          <div class="pit-name">Pork Spare Ribs</div>
+          <div class="pit-detail">Post Oak &bull; 5-6 hrs</div>
+          <div class="pit-tag">Fall-Off-Bone</div>
+        </div>
+      </div>
+      <div class="pit-card reveal">
+        <img src="https://images.unsplash.com/photo-1558030006-450675393462?w=600&auto=format&fit=crop&q=80" alt="Sausage Links" loading="lazy">
+        <div class="pit-overlay">
+          <div class="pit-name">Sausage Links</div>
+          <div class="pit-detail">Post Oak &bull; 2 hrs</div>
+          <div class="pit-tag">House-Made Daily</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MENU -->
+<section class="menu-section" id="menu">
+  <div class="section-inner">
+    <div class="section-label">What We're Serving</div>
+    <h2 class="section-title">The Menu</h2>
+    <p class="section-sub">Ordered by the pound or by the plate. No modifications, no substitutions.</p>
+    <div class="menu-tabs" style="margin-top:40px;">
+      <button class="tab-btn active" onclick="switchTab('meats')">Smoked Meats</button>
+      <button class="tab-btn" onclick="switchTab('sides')">Sides</button>
+      <button class="tab-btn" onclick="switchTab('sandwiches')">Sandwiches</button>
+      <button class="tab-btn" onclick="switchTab('drinks')">Drinks</button>
+    </div>
+
+    <!-- SMOKED MEATS -->
+    <div class="tab-panel active" id="tab-meats">
+      <div class="menu-grid">
+        <div class="menu-item reveal">
+          <img src="https://images.unsplash.com/photo-1529193591184-b1d58069ecdd?w=200&auto=format&fit=crop&q=80" alt="Brisket">
+          <div class="item-info">
+            <div class="item-name">Prime Brisket</div>
+            <div class="item-desc">USDA Prime whole packer brisket, 14-18 hour post oak smoke. Pepper and salt crust. Sold by weight.</div>
+            <div class="item-price">$28 / lb <span class="item-badge">House Special</span></div>
+          </div>
+        </div>
+        <div class="menu-item reveal">
+          <img src="https://images.unsplash.com/photo-1544025162-d76694265947?w=200&auto=format&fit=crop&q=80" alt="Beef Ribs">
+          <div class="item-info">
+            <div class="item-name">Beef Short Ribs</div>
+            <div class="item-desc">Bone-in short ribs smoked 8-10 hours. Dubbed "dinosaur ribs" for good reason. One bone feeds two.</div>
+            <div class="item-price">$38 / lb</div>
+          </div>
+        </div>
+        <div class="menu-item reveal">
+          <img src="https://images.unsplash.com/photo-1600891964092-4316c288032e?w=200&auto=format&fit=crop&q=80" alt="Pork Ribs">
+          <div class="item-info">
+            <div class="item-name">Pork Spare Ribs</div>
+            <div class="item-desc">St. Louis cut, dry rubbed, smoked five to six hours over post oak. No sauce on the rack, ever.</div>
+            <div class="item-price">$26 / rack</div>
+          </div>
+        </div>
+        <div class="menu-item reveal">
+          <img src="https://images.unsplash.com/photo-1558030006-450675393462?w=200&auto=format&fit=crop&q=80" alt="Sausage">
+          <div class="item-info">
+            <div class="item-name">House Sausage Link</div>
+            <div class="item-desc">Made in-house each morning: coarse-ground beef and pork, black pepper, garlic, smoked for two hours.</div>
+            <div class="item-price">$9 / link</div>
+          </div>
+        </div>
+        <div class="menu-item reveal">
+          <img src="https://images.unsplash.com/photo-1565299507177-b0ac66763828?w=200&auto=format&fit=crop&q=80" alt="Turkey">
+          <div class="item-info">
+            <div class="item-name">Smoked Turkey Breast</div>
+            <div class="item-desc">Whole turkey breast, brined overnight, smoked over post oak. Juicy white meat with a golden bark.</div>
+            <div class="item-price">$18 / lb</div>
+          </div>
+        </div>
+        <div class="menu-item reveal">
+          <img src="https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=200&auto=format&fit=crop&q=80" alt="Pulled Pork">
+          <div class="item-info">
+            <div class="item-name">Pulled Pork</div>
+            <div class="item-desc">Bone-in pork shoulder smoked until it falls apart. Served with vinegar slaw and a side of drippings.</div>
+            <div class="item-price">$16 / lb</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SIDES -->
+    <div class="tab-panel" id="tab-sides">
+      <div class="menu-grid">
+        <div class="menu-item reveal">
+          <img src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=200&auto=format&fit=crop&q=80" alt="Pinto Beans">
+          <div class="item-info">
+            <div class="item-name">Cowboy Pinto Beans</div>
+            <div class="item-desc">Slow-simmered pintos with brisket trimmings, onion, cumin, and a dried chile. A Hill Country staple.</div>
+            <div class="item-price">$4</div>
+          </div>
+        </div>
+        <div class="menu-item reveal">
+          <img src="https://images.unsplash.com/photo-1600803907087-f56d462fd26b?w=200&auto=format&fit=crop&q=80" alt="Potato Salad">
+          <div class="item-info">
+            <div class="item-name">German Potato Salad</div>
+            <div class="item-desc">Vinegar-dressed potato salad in the German Texas tradition. No mayonnaise, warm bacon vinaigrette.</div>
+            <div class="item-price">$4</div>
+          </div>
+        </div>
+        <div class="menu-item reveal">
+          <img src="https://images.unsplash.com/photo-1587132137056-bfbf0166836e?w=200&auto=format&fit=crop&q=80" alt="Slaw">
+          <div class="item-info">
+            <div class="item-name">Creamy Jalapeño Slaw</div>
+            <div class="item-desc">Shredded cabbage, pickled jalapeño, and a tangy buttermilk dressing. Goes on everything.</div>
+            <div class="item-price">$4</div>
+          </div>
+        </div>
+        <div class="menu-item reveal">
+          <img src="https://images.unsplash.com/photo-1571167366136-b57e069f6c28?w=200&auto=format&fit=crop&q=80" alt="Cornbread">
+          <div class="item-info">
+            <div class="item-name">Cast Iron Cornbread</div>
+            <div class="item-desc">Skillet cornbread baked to order. Crispy edge, tender center. Served with honey butter.</div>
+            <div class="item-price">$5</div>
+          </div>
+        </div>
+        <div class="menu-item reveal">
+          <img src="https://images.unsplash.com/photo-1562967914-608f82629710?w=200&auto=format&fit=crop&q=80" alt="Mac and Cheese">
+          <div class="item-info">
+            <div class="item-name">Smoked Mac &amp; Cheese</div>
+            <div class="item-desc">Three Texas cheeses, elbow pasta, smoked for 45 minutes. Topped with brisket crumbles.</div>
+            <div class="item-price">$6</div>
+          </div>
+        </div>
+        <div class="menu-item reveal">
+          <img src="https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=200&auto=format&fit=crop&q=80" alt="Pickles and Onions">
+          <div class="item-info">
+            <div class="item-name">Pickles &amp; Raw Onion</div>
+            <div class="item-desc">The classic Central Texas table condiments. Always free with any meat order. Just ask.</div>
+            <div class="item-price">Free with meat</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SANDWICHES -->
+    <div class="tab-panel" id="tab-sandwiches">
+      <div class="menu-grid">
+        <div class="menu-item reveal">
+          <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=200&auto=format&fit=crop&q=80" alt="Brisket Sandwich">
+          <div class="item-info">
+            <div class="item-name">Brisket Sandwich</div>
+            <div class="item-desc">Quarter pound of sliced brisket on a potato bun with yellow mustard, pickles, and white onion. Old school.</div>
+            <div class="item-price">$14</div>
+          </div>
+        </div>
+        <div class="menu-item reveal">
+          <img src="https://images.unsplash.com/photo-1565299507177-b0ac66763828?w=200&auto=format&fit=crop&q=80" alt="Pulled Pork Sandwich">
+          <div class="item-info">
+            <div class="item-name">Pulled Pork Sandwich</div>
+            <div class="item-desc">Hand-pulled pork on a toasted brioche bun with jalapeño slaw and a hit of house hot sauce.</div>
+            <div class="item-price">$13</div>
+          </div>
+        </div>
+        <div class="menu-item reveal">
+          <img src="https://images.unsplash.com/photo-1558030006-450675393462?w=200&auto=format&fit=crop&q=80" alt="Sausage Wrap">
+          <div class="item-info">
+            <div class="item-name">Sausage Wrap</div>
+            <div class="item-desc">One house sausage link, sliced, wrapped in butcher paper with crackers, pickles, and raw onion. Texas-style.</div>
+            <div class="item-price">$11</div>
+          </div>
+        </div>
+        <div class="menu-item reveal">
+          <img src="https://images.unsplash.com/photo-1529193591184-b1d58069ecdd?w=200&auto=format&fit=crop&q=80" alt="Chopped Beef Sandwich">
+          <div class="item-info">
+            <div class="item-name">Chopped Beef Sandwich</div>
+            <div class="item-desc">Brisket point chopped with drippings and pickled jalapeño on white bread. Roy's original recipe.</div>
+            <div class="item-price">$13 <span class="item-badge">Roy's Original</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DRINKS -->
+    <div class="tab-panel" id="tab-drinks">
+      <div class="menu-grid">
+        <div class="menu-item reveal">
+          <img src="https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=200&auto=format&fit=crop&q=80" alt="Shiner Bock">
+          <div class="item-info">
+            <div class="item-name">Shiner Bock</div>
+            <div class="item-desc">The Texas barbecue companion. Brewed in Shiner, TX since 1909. No other beer is available. This is the one.</div>
+            <div class="item-price">$5 / bottle</div>
+          </div>
+        </div>
+        <div class="menu-item reveal">
+          <img src="https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?w=200&auto=format&fit=crop&q=80" alt="Sweet Tea">
+          <div class="item-info">
+            <div class="item-name">Texas Sweet Tea</div>
+            <div class="item-desc">House-brewed black tea, heavy sweet, served over ice in a mason jar. Refills are free, always.</div>
+            <div class="item-price">$3 / mason jar</div>
+          </div>
+        </div>
+        <div class="menu-item reveal">
+          <img src="https://images.unsplash.com/photo-1544025162-d76694265947?w=200&auto=format&fit=crop&q=80" alt="Lemonade">
+          <div class="item-info">
+            <div class="item-name">Hill Country Lemonade</div>
+            <div class="item-desc">Fresh-squeezed with a splash of peach simple syrup. Made daily. Non-alcoholic and unbeatable in summer heat.</div>
+            <div class="item-price">$4</div>
+          </div>
+        </div>
+        <div class="menu-item reveal">
+          <img src="https://images.unsplash.com/photo-1569529465841-dfecdab7503b?w=200&auto=format&fit=crop&q=80" alt="Topo Chico">
+          <div class="item-info">
+            <div class="item-name">Topo Chico</div>
+            <div class="item-desc">Mexican sparkling mineral water. Ice cold. The perfect palate cleanser between meats.</div>
+            <div class="item-price">$3</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- THE BOARD -->
+<section class="board-section" id="board">
+  <div class="board-inner">
+    <div class="board-header">
+      <div class="section-label">Updated Daily</div>
+      <h2 class="section-title" style="color:#F0E8DC;">Today's Board</h2>
+      <p class="section-sub">What came off the pits this morning. When it's gone, it's gone. No exceptions.</p>
+    </div>
+    <div class="board-grid">
+      <div class="board-card reveal">
+        <div class="board-icon">🥩</div>
+        <div class="board-title">Whole Packer Brisket</div>
+        <div class="board-desc">USDA Prime. On the pit since 4 AM over split post oak. Approximately 14 whole briskets available today.</div>
+        <div class="board-detail">Estimated sell-out: 1:30 PM</div>
+      </div>
+      <div class="board-card featured reveal">
+        <div class="board-icon">🦴</div>
+        <div class="board-title">Beef Short Ribs</div>
+        <div class="board-desc">Today's special. Only 8 racks available. Three-bone plate, roughly 2.5 lbs per rack. Come early or miss out.</div>
+        <div class="board-detail">Weekend only &bull; 8 racks today</div>
+      </div>
+      <div class="board-card reveal">
+        <div class="board-icon">🌭</div>
+        <div class="board-title">House Sausage</div>
+        <div class="board-desc">Ground this morning from brisket trim and pork shoulder. Jalapeño-cheddar today. 60 links total.</div>
+        <div class="board-detail">Estimated sell-out: 2:00 PM</div>
+      </div>
+    </div>
+    <div style="text-align:center;margin-top:40px;">
+      <p style="color:var(--tan);font-size:.85rem;line-height:1.7;">Board updated at 7 AM daily. Call ahead at <strong style="color:#F0E8DC;">(325) 247-8841</strong> to check availability before you drive out.</p>
+    </div>
+  </div>
+</section>
+
+<!-- SPECIALS -->
+<section class="specials-section" id="specials">
+  <div class="section-inner">
+    <div class="section-label">Weekly Specials</div>
+    <h2 class="section-title">Come Back<br>Every Day</h2>
+    <p class="section-sub">Each day of the week brings something a little different off the pits.</p>
+    <div class="specials-grid">
+      <div class="special-card reveal">
+        <div class="special-day">MON &amp; TUE</div>
+        <div class="special-info">
+          <div class="special-name">Two-Meat Plate Lunch</div>
+          <div class="special-desc">Choose any two meats, two sides, bread, and pickles. Perfect weekday lunch for one. No extras, no substitutions.</div>
+          <div class="special-price">$22 per plate</div>
+        </div>
+      </div>
+      <div class="special-card reveal">
+        <div class="special-day">WED</div>
+        <div class="special-info">
+          <div class="special-name">Sausage Wednesday</div>
+          <div class="special-desc">Buy two house sausage links and get a third free. We rotate the flavour each week: jalapeño-cheddar, garlic-pork, or beef-pepper.</div>
+          <div class="special-price">2 for the price of 3 — free extra</div>
+        </div>
+      </div>
+      <div class="special-card reveal">
+        <div class="special-day">THU</div>
+        <div class="special-info">
+          <div class="special-name">Chopped Beef Day</div>
+          <div class="special-desc">Roy's original chopped beef sandwich plus two sides for $15. Named Thursday special because Roy started serving it on a Thursday in 1981.</div>
+          <div class="special-price">$15 combo</div>
+        </div>
+      </div>
+      <div class="special-card reveal">
+        <div class="special-day">FRI</div>
+        <div class="special-info">
+          <div class="special-name">Beef Rib Friday</div>
+          <div class="special-desc">Short ribs go on Thursday night for Friday service. The only day we guarantee beef ribs are available. First come, first served. Runs out by noon most weeks.</div>
+          <div class="special-price">$38 / lb — Friday only</div>
+        </div>
+      </div>
+      <div class="special-card reveal">
+        <div class="special-day">SAT &amp; SUN</div>
+        <div class="special-info">
+          <div class="special-name">Family Feast Tray</div>
+          <div class="special-desc">2 lbs brisket, 1 rack pork ribs, 4 sausage links, four sides, and a whole skillet cornbread. Feeds six comfortably, eight if they're polite.</div>
+          <div class="special-price">$145 — feeds 6-8</div>
+        </div>
+      </div>
+      <div class="special-card reveal">
+        <div class="special-day">DAILY</div>
+        <div class="special-info">
+          <div class="special-name">The Pitmaster's Pick</div>
+          <div class="special-desc">Whatever Roy Jr. thinks is hitting best today. Could be the lean, could be the fatty, could be a special cut we're testing. Served until it runs out. No advance notice.</div>
+          <div class="special-price">Market price</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PITMASTER -->
+<section class="pitmaster-section" id="pitmaster">
+  <div class="section-inner">
+    <div class="pitmaster-grid">
+      <div class="pitmaster-img reveal">
+        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=700&auto=format&fit=crop&q=80" alt="Roy Caldwell Jr." loading="lazy">
+        <div class="pitmaster-ribbon">Roy Caldwell Jr. &mdash; Pitmaster</div>
+      </div>
+      <div class="pitmaster-text reveal">
+        <div class="section-label">The Man Behind the Smoke</div>
+        <h2 class="section-title">Four Pits.<br>One Method.</h2>
+        <p class="section-sub" style="max-width:100%;margin-bottom:16px;">Roy Jr. took over the pits from his father in 2001. He changed nothing about the technique and changed everything about the sourcing.</p>
+        <p style="font-size:1rem;line-height:1.85;color:var(--sub);margin-bottom:16px;">The briskets are now USDA Prime, sourced from a single ranch in Hereford, Texas. The post oak is cut and split on-site from land Roy owns fifteen miles north. The sausage recipe is still his father's, written on a notecard in a drawer next to the smoker.</p>
+        <p style="font-size:1rem;line-height:1.85;color:var(--sub);margin-bottom:24px;">Roy Jr. was named one of Texas Monthly's "Top 50 BBQ Joints" in three separate decades. He has declined every offer to franchise. There is one Lone Star Pit. There will always be one Lone Star Pit.</p>
+        <div class="pitmaster-creds">
+          <div class="cred-item">
+            <div class="cred-icon">🏆</div>
+            <div class="cred-text"><strong>Texas Monthly Top 50 BBQ</strong> &mdash; 2003, 2013, 2023 &mdash; Three decades, one list</div>
+          </div>
+          <div class="cred-item">
+            <div class="cred-icon">📰</div>
+            <div class="cred-text"><strong>Featured in Garden &amp; Gun, Texas Highways, Bon Appetit</strong> &mdash; "Worth a Detour" every time</div>
+          </div>
+          <div class="cred-item">
+            <div class="cred-icon">🪵</div>
+            <div class="cred-text"><strong>Post oak only</strong> &mdash; Cuts and splits his own wood. No hickory, no mesquite, no exceptions</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- GALLERY -->
+<section class="gallery-section" id="gallery">
+  <div class="gallery-label">Lone Star Pit</div>
+  <h2 class="gallery-title">From the Pit</h2>
+  <div class="gallery-grid">
+    <div class="gallery-item">
+      <img src="https://images.unsplash.com/photo-1529193591184-b1d58069ecdd?w=900&auto=format&fit=crop&q=80" alt="Brisket" loading="lazy">
+    </div>
+    <div class="gallery-item">
+      <img src="https://images.unsplash.com/photo-1544025162-d76694265947?w=600&auto=format&fit=crop&q=80" alt="Ribs" loading="lazy">
+    </div>
+    <div class="gallery-item">
+      <img src="https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=600&auto=format&fit=crop&q=80" alt="Pitmaster" loading="lazy">
+    </div>
+    <div class="gallery-item">
+      <img src="https://images.unsplash.com/photo-1558030006-450675393462?w=600&auto=format&fit=crop&q=80" alt="Sausage" loading="lazy">
+    </div>
+    <div class="gallery-item">
+      <img src="https://images.unsplash.com/photo-1565299507177-b0ac66763828?w=600&auto=format&fit=crop&q=80" alt="Food plate" loading="lazy">
+    </div>
+  </div>
+</section>
+
+<!-- REVIEWS -->
+<section class="reviews-section" id="reviews">
+  <div class="section-inner">
+    <div class="section-label">What People Say</div>
+    <h2 class="section-title">Worth Every<br>Mile</h2>
+    <div class="reviews-grid">
+      <div class="review-card reveal">
+        <div class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <p class="review-text">"Drove 90 miles from Austin. The brisket is the best I have had in 40 years of eating Texas barbecue. The bark is perfect, the fat is rendered, the smoke ring goes to the bone. No sauce needed, none available, none missed."</p>
+        <div class="review-author">
+          <div class="review-avatar">J</div>
+          <div>
+            <div class="reviewer-name">Jim Hawkins</div>
+            <div class="reviewer-info">Austin, TX &bull; Google Review</div>
+          </div>
+        </div>
+      </div>
+      <div class="review-card reveal">
+        <div class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <p class="review-text">"I have eaten at every joint on the Texas Monthly top 50 list. Lone Star Pit deserves to be ranked higher than it is. The beef ribs on Friday are genuinely something else. Plan your whole trip around them."</p>
+        <div class="review-author">
+          <div class="review-avatar">S</div>
+          <div>
+            <div class="reviewer-name">Sarah Delgado</div>
+            <div class="reviewer-info">Houston, TX &bull; Yelp Review</div>
+          </div>
+        </div>
+      </div>
+      <div class="review-card reveal">
+        <div class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <p class="review-text">"Arrived at 10:45 AM on a Saturday and the beef ribs were already half gone. Waited in line for forty minutes. Would do it every weekend if I lived closer. The chopped beef sandwich is also elite. Roy's original recipe is undefeated."</p>
+        <div class="review-author">
+          <div class="review-avatar">M</div>
+          <div>
+            <div class="reviewer-name">Marcus Webb</div>
+            <div class="reviewer-info">San Antonio, TX &bull; TripAdvisor</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- RESERVATION -->
+<section id="reservation">
+  <div class="res-inner">
+    <div class="section-label">Reserve Your Spot</div>
+    <h2 class="section-title">Book a Table</h2>
+    <p class="section-sub">Large groups (6+) require a reservation. Walk-ins welcome for parties under 6 — come early.</p>
+    <form class="res-form" onsubmit="return false;">
+      <div class="form-group">
+        <label>First Name</label>
+        <input type="text" placeholder="Roy">
+      </div>
+      <div class="form-group">
+        <label>Last Name</label>
+        <input type="text" placeholder="Caldwell">
+      </div>
+      <div class="form-group">
+        <label>Phone</label>
+        <input type="tel" placeholder="(325) 555-0000">
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" placeholder="you@email.com">
+      </div>
+      <div class="form-group">
+        <label>Date</label>
+        <input type="date">
+      </div>
+      <div class="form-group">
+        <label>Party Size</label>
+        <select>
+          <option>6 guests</option>
+          <option>7 guests</option>
+          <option>8 guests</option>
+          <option>9 guests</option>
+          <option>10+ guests</option>
+        </select>
+      </div>
+      <div class="form-group full">
+        <label>Special Requests</label>
+        <textarea placeholder="Allergies, accessibility needs, or anything else we should know..."></textarea>
+      </div>
+      <button class="btn-submit" type="submit">Send Reservation Request</button>
+    </form>
+  </div>
+</section>
+
+<!-- INFO STRIP -->
+<div class="info-strip">
+  <div class="info-inner">
+    <div class="info-block">
+      <div class="info-icon">📍</div>
+      <div class="info-label">Find Us</div>
+      <div class="info-value">218 East Young Street<br>Llano, TX 78643</div>
+    </div>
+    <div class="info-block">
+      <div class="info-icon">🕒</div>
+      <div class="info-label">Hours</div>
+      <div class="info-value">Wed &ndash; Sun: 10:30 AM<br>Until Sold Out</div>
+    </div>
+    <div class="info-block">
+      <div class="info-icon">📞</div>
+      <div class="info-label">Call Ahead</div>
+      <div class="info-value">(325) 247-8841<br>Check daily availability</div>
+    </div>
+    <div class="info-block">
+      <div class="info-icon">🅿️</div>
+      <div class="info-label">Parking</div>
+      <div class="info-value">Free lot on Main Street<br>Walk 2 minutes east</div>
+    </div>
+  </div>
+</div>
+
+<!-- MAP -->
+<div style="height:350px;overflow:hidden;">
+  <iframe
+    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3461.0!2d-98.6800!3d30.7500!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMzDCsDQ1JzAwLjAiTiA5OMKwNDAnNDguMCJX!5e0!3m2!1sen!2sus!4v1234567890"
+    width="100%" height="350" style="border:0;display:block;" allowfullscreen="" loading="lazy">
+  </iframe>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div>
+        <div class="footer-logo"><span>LONE</span> STAR PIT</div>
+        <p class="footer-tagline">Central Texas barbecue the way it has always been done. Post oak. Salt and pepper. Time. No shortcuts, no sauce, no apologies.</p>
+      </div>
+      <div>
+        <div class="footer-heading">Navigate</div>
+        <ul class="footer-links">
+          <li><a href="#about">Our Story</a></li>
+          <li><a href="#pits">The Pits</a></li>
+          <li><a href="#menu">Menu</a></li>
+          <li><a href="#board">Today's Board</a></li>
+          <li><a href="#specials">Specials</a></li>
+          <li><a href="#reservation">Book a Table</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-heading">Contact</div>
+        <ul class="footer-links">
+          <li><a href="tel:+13252478841">(325) 247-8841</a></li>
+          <li><a href="mailto:pits@lonestarpit.com">pits@lonestarpit.com</a></li>
+          <li><a href="#">218 East Young Street</a></li>
+          <li><a href="#">Llano, TX 78643</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-copy">&copy; 2024 Lone Star Pit. All rights reserved.</div>
+      <div class="footer-credit">Template by Vinayak Ganiger &times; Claude (Anthropic AI)</div>
+    </div>
+  </div>
+</footer>
+
+<!-- FLOAT CTA -->
+<a href="#reservation" class="float-cta" id="floatCta">Book a Table</a>
+
+<script>
+// === LOADER ===
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    document.getElementById('loader').classList.add('hidden');
+  }, 1200);
+});
+
+// === DARK MODE ===
+const modeBtn = document.getElementById('modeBtn');
+const body = document.body;
+const saved = localStorage.getItem('lsp_dark');
+if (saved === 'true') {
+  body.classList.add('dark-mode');
+  modeBtn.textContent = '☀️';
+}
+modeBtn.addEventListener('click', () => {
+  const isDark = body.classList.toggle('dark-mode');
+  localStorage.setItem('lsp_dark', isDark);
+  modeBtn.textContent = isDark ? '☀️' : '🌙';
+});
+
+// === NAVBAR SCROLL ===
+const navbar = document.getElementById('navbar');
+window.addEventListener('scroll', () => {
+  navbar.classList.toggle('scrolled', window.scrollY > 40);
+});
+
+// === MOBILE MENU ===
+const hamburger = document.getElementById('hamburger');
+const mobileMenu = document.getElementById('mobileMenu');
+hamburger.addEventListener('click', () => {
+  mobileMenu.classList.toggle('open');
+});
+function closeMobile() {
+  mobileMenu.classList.remove('open');
+}
+
+// === MENU TABS ===
+function switchTab(id) {
+  document.querySelectorAll('.tab-btn').forEach((btn, i) => {
+    btn.classList.toggle('active', btn.getAttribute('onclick').includes(id));
+  });
+  document.querySelectorAll('.tab-panel').forEach(p => {
+    p.classList.toggle('active', p.id === 'tab-' + id);
+  });
+}
+
+// === SCROLL REVEAL ===
+const revealObs = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      revealObs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
+
+// === FLOAT CTA ===
+const floatCta = document.getElementById('floatCta');
+const resSection = document.getElementById('reservation');
+const resObs = new IntersectionObserver((entries) => {
+  floatCta.classList.toggle('hidden', entries[0].isIntersecting);
+});
+resObs.observe(resSection);
+</script>
+</body>
+</html>

@@ -1,0 +1,1374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ember — Modern BBQ Bar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ===== RESET ===== */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+img{max-width:100%;display:block}
+a{text-decoration:none;color:inherit}
+button{cursor:pointer;border:none;background:none;font-family:inherit}
+
+/* ===== VARIABLES — DARK (DEFAULT) ===== */
+:root{
+  --ember:    #E04A0C;
+  --copper:   #B87333;
+  --gold:     #D4A853;
+  --charcoal: #141210;
+  --ash:      #1E1B18;
+  --coal:     #252119;
+  --ivory:    #F2EDE5;
+  --muted:    #8A7F74;
+  --warm:     #C4B49A;
+
+  --bg:       var(--charcoal);
+  --card:     var(--ash);
+  --surface:  var(--coal);
+  --text:     var(--ivory);
+  --sub:      var(--warm);
+  --border:   rgba(255,255,255,0.07);
+  --nav-bg:   rgba(20,18,16,0.96);
+}
+
+/* ===== LIGHT MODE ===== */
+body.light-mode{
+  --bg:      #F7F3EE;
+  --card:    #FFFFFF;
+  --surface: #F0EBE3;
+  --text:    #1E1208;
+  --sub:     #6A5D52;
+  --border:  rgba(30,18,8,0.1);
+  --nav-bg:  rgba(247,243,238,0.96);
+}
+
+/* ===== BASE ===== */
+body{
+  font-family:'DM Sans',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  transition:background .3s,color .3s;
+  overflow-x:hidden;
+}
+
+/* ===== LOADER ===== */
+#loader{
+  position:fixed;inset:0;z-index:9999;
+  background:var(--charcoal);
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:28px;
+}
+.loader-wordmark{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(2.5rem,8vw,5rem);
+  font-weight:400;letter-spacing:.3em;
+  color:var(--ivory);
+}
+.loader-tagline{
+  font-size:.68rem;font-weight:600;letter-spacing:.28em;
+  text-transform:uppercase;color:var(--ember);
+}
+.ember-anim{
+  display:flex;align-items:flex-end;gap:5px;
+  margin-top:8px;
+}
+.em-dot{
+  width:8px;height:8px;border-radius:50%;
+  background:var(--ember);
+  animation:emPulse 1.4s ease-in-out infinite;
+}
+.em-dot:nth-child(1){animation-delay:0s;}
+.em-dot:nth-child(2){animation-delay:.2s;background:var(--copper);}
+.em-dot:nth-child(3){animation-delay:.4s;background:var(--gold);}
+.em-dot:nth-child(4){animation-delay:.6s;background:var(--copper);}
+.em-dot:nth-child(5){animation-delay:.8s;background:var(--ember);}
+@keyframes emPulse{
+  0%,100%{transform:scale(.6);opacity:.4;}
+  50%{transform:scale(1.3);opacity:1;}
+}
+#loader.hidden{opacity:0;pointer-events:none;transition:opacity .6s;}
+
+/* ===== NAVBAR ===== */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  background:var(--nav-bg);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+  transition:background .3s,box-shadow .3s;
+}
+nav.scrolled{box-shadow:0 2px 24px rgba(0,0,0,.3);}
+.nav-inner{
+  max-width:1280px;margin:0 auto;
+  padding:0 32px;height:68px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.nav-logo{
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.7rem;font-weight:400;
+  letter-spacing:.25em;color:var(--text);
+}
+.nav-logo em{font-style:normal;color:var(--ember);}
+.nav-links{display:flex;gap:36px;list-style:none;}
+.nav-links a{
+  font-size:.78rem;font-weight:600;
+  letter-spacing:.1em;text-transform:uppercase;
+  color:var(--sub);transition:color .2s;
+}
+.nav-links a:hover{color:var(--ember);}
+.nav-actions{display:flex;align-items:center;gap:14px;}
+.btn-mode{
+  width:38px;height:38px;border-radius:50%;
+  background:var(--surface);border:1px solid var(--border);
+  font-size:1rem;display:flex;align-items:center;justify-content:center;
+  transition:background .2s;
+}
+.btn-mode:hover{background:var(--ember);color:#fff;}
+.btn-reserve{
+  padding:10px 22px;border-radius:2px;
+  background:transparent;color:var(--ember);
+  border:1px solid var(--ember);
+  font-size:.78rem;font-weight:700;
+  letter-spacing:.1em;text-transform:uppercase;
+  transition:background .2s,color .2s;
+}
+.btn-reserve:hover{background:var(--ember);color:#fff;}
+.hamburger{display:none;flex-direction:column;gap:5px;padding:4px;}
+.hamburger span{width:22px;height:1.5px;background:var(--text);border-radius:1px;transition:.3s;}
+.mobile-menu{
+  display:none;position:fixed;top:68px;left:0;right:0;
+  background:var(--nav-bg);backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+  flex-direction:column;padding:16px 32px 28px;z-index:99;
+}
+.mobile-menu.open{display:flex;}
+.mobile-menu a{
+  padding:14px 0;font-size:.85rem;font-weight:600;
+  text-transform:uppercase;letter-spacing:.08em;
+  color:var(--text);border-bottom:1px solid var(--border);
+}
+.mobile-menu a:last-child{border-bottom:none;}
+
+/* ===== HERO ===== */
+.hero{
+  position:relative;min-height:100vh;
+  display:flex;align-items:center;
+  overflow:hidden;
+}
+.hero-bg{
+  position:absolute;inset:0;
+  background-image:url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=1800&auto=format&fit=crop&q=80');
+  background-size:cover;background-position:center 30%;
+  filter:brightness(.25) saturate(.8);
+}
+.hero-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(105deg, rgba(20,18,16,.95) 40%, rgba(20,18,16,.4) 100%);
+}
+.hero-content{
+  position:relative;z-index:1;
+  max-width:1280px;margin:0 auto;padding:120px 32px 80px;
+}
+.hero-eyebrow{
+  font-size:.7rem;font-weight:600;letter-spacing:.28em;
+  text-transform:uppercase;color:var(--copper);
+  margin-bottom:24px;display:flex;align-items:center;gap:12px;
+}
+.hero-eyebrow::before{
+  content:'';display:block;width:32px;height:1px;
+  background:var(--copper);
+}
+.hero-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(4rem,10vw,9rem);
+  font-weight:400;line-height:.95;
+  letter-spacing:-.01em;color:var(--ivory);
+  margin-bottom:24px;
+}
+.hero-title em{font-style:italic;color:var(--ember);}
+.hero-desc{
+  font-size:1.05rem;line-height:1.8;
+  color:rgba(242,237,229,.6);
+  max-width:480px;margin-bottom:48px;
+}
+.hero-ctas{display:flex;gap:16px;flex-wrap:wrap;}
+.cta-filled{
+  padding:15px 40px;background:var(--ember);color:#fff;
+  font-size:.78rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  border-radius:2px;transition:background .2s;
+}
+.cta-filled:hover{background:var(--copper);}
+.cta-outline{
+  padding:15px 40px;border:1px solid rgba(242,237,229,.3);color:var(--ivory);
+  font-size:.78rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  border-radius:2px;transition:border-color .2s,color .2s;
+}
+.cta-outline:hover{border-color:var(--gold);color:var(--gold);}
+.hero-meta{
+  position:absolute;right:32px;top:50%;transform:translateY(-50%);
+  display:flex;flex-direction:column;gap:32px;align-items:center;
+  z-index:1;
+}
+.hero-meta-item{
+  writing-mode:vertical-rl;transform:rotate(180deg);
+  font-size:.65rem;font-weight:600;letter-spacing:.2em;
+  text-transform:uppercase;color:rgba(242,237,229,.35);
+}
+
+/* ===== SECTIONS ===== */
+section{padding:96px 32px;}
+.section-inner{max-width:1280px;margin:0 auto;}
+.eyebrow{
+  font-size:.7rem;font-weight:600;letter-spacing:.22em;
+  text-transform:uppercase;color:var(--ember);
+  margin-bottom:16px;
+}
+.heading{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(2.2rem,5vw,4rem);
+  font-weight:400;line-height:1.1;
+  color:var(--text);margin-bottom:16px;
+}
+.heading em{font-style:italic;}
+.sub{
+  font-size:1rem;line-height:1.8;
+  color:var(--sub);max-width:520px;
+}
+
+/* ===== DIVIDER ===== */
+.divider{
+  height:1px;background:var(--border);
+  max-width:1280px;margin:0 auto;
+}
+
+/* ===== EXPERIENCE ===== */
+.exp-grid{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:80px;align-items:center;
+}
+.exp-img{position:relative;}
+.exp-img img{width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:2px;}
+.exp-label{
+  position:absolute;bottom:32px;left:-24px;
+  background:var(--ember);color:#fff;
+  padding:12px 20px;
+  font-size:.7rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  border-radius:2px;
+}
+.exp-text{}
+.exp-features{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:24px;margin-top:40px;
+}
+.exp-feat{
+  padding:24px;background:var(--surface);
+  border:1px solid var(--border);border-radius:2px;
+}
+.feat-icon{font-size:1.5rem;margin-bottom:12px;}
+.feat-title{
+  font-size:.85rem;font-weight:700;
+  letter-spacing:.06em;color:var(--text);
+  margin-bottom:6px;
+}
+.feat-desc{font-size:.8rem;line-height:1.6;color:var(--sub);}
+
+/* ===== MENU ===== */
+.menu-section{background:var(--surface);}
+.menu-tabs{
+  display:flex;gap:0;
+  border-bottom:1px solid var(--border);
+  margin-bottom:56px;overflow-x:auto;
+}
+.tab-btn{
+  padding:16px 32px;font-size:.75rem;font-weight:700;
+  letter-spacing:.14em;text-transform:uppercase;
+  color:var(--sub);border-bottom:2px solid transparent;
+  margin-bottom:-1px;transition:color .2s,border-color .2s;
+  white-space:nowrap;
+}
+.tab-btn.active{color:var(--ember);border-bottom-color:var(--ember);}
+.tab-btn:hover:not(.active){color:var(--text);}
+.tab-panel{display:none;}
+.tab-panel.active{display:block;}
+
+.menu-featured{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:2px;margin-bottom:2px;
+}
+.menu-row{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:2px;
+}
+.menu-card{
+  background:var(--card);
+  overflow:hidden;
+  transition:box-shadow .2s;
+}
+.menu-card:hover{box-shadow:0 0 0 1px var(--ember);}
+.menu-card-img{
+  width:100%;aspect-ratio:16/9;object-fit:cover;
+}
+.menu-card-body{padding:24px;}
+.mc-tag{
+  display:inline-block;margin-bottom:10px;
+  padding:3px 10px;background:rgba(224,74,12,.12);
+  border-radius:2px;
+  font-family:'DM Mono',monospace;
+  font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--ember);
+}
+.mc-name{
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.4rem;font-weight:600;
+  color:var(--text);margin-bottom:6px;
+}
+.mc-desc{font-size:.82rem;line-height:1.65;color:var(--sub);margin-bottom:14px;}
+.mc-footer{
+  display:flex;align-items:center;justify-content:space-between;
+}
+.mc-price{
+  font-size:1rem;font-weight:700;color:var(--text);
+}
+.mc-note{
+  font-family:'DM Mono',monospace;
+  font-size:.68rem;color:var(--sub);
+}
+
+.menu-list{display:flex;flex-direction:column;gap:0;}
+.list-item{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:20px 0;border-bottom:1px solid var(--border);
+  gap:24px;
+}
+.list-item:last-child{border-bottom:none;}
+.li-info{}
+.li-name{
+  font-size:.95rem;font-weight:600;color:var(--text);margin-bottom:4px;
+}
+.li-desc{font-size:.82rem;line-height:1.5;color:var(--sub);}
+.li-price{
+  font-size:1rem;font-weight:700;color:var(--text);
+  white-space:nowrap;
+}
+
+/* ===== TASTING MENU ===== */
+.tasting-section{background:var(--charcoal);padding:96px 32px;}
+.tasting-inner{max-width:900px;margin:0 auto;}
+.tasting-header{text-align:center;margin-bottom:64px;}
+.tasting-header .heading{font-size:clamp(2.5rem,6vw,4.5rem);}
+.tasting-header .sub{margin:0 auto;}
+.course-list{display:flex;flex-direction:column;gap:0;}
+.course{
+  display:grid;grid-template-columns:48px 1fr auto;
+  gap:24px;align-items:start;
+  padding:28px 0;border-bottom:1px solid var(--border);
+}
+.course:last-child{border-bottom:none;}
+.course-num{
+  font-family:'DM Mono',monospace;
+  font-size:.78rem;color:var(--ember);
+  padding-top:4px;
+}
+.course-info{}
+.course-name{
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.4rem;font-weight:600;
+  color:var(--ivory);margin-bottom:4px;
+}
+.course-desc{font-size:.85rem;line-height:1.65;color:var(--warm);margin-bottom:6px;}
+.course-pairing{
+  font-size:.75rem;font-weight:600;letter-spacing:.08em;
+  color:var(--gold);text-transform:uppercase;
+}
+.course-price{
+  font-size:.85rem;font-weight:600;color:var(--sub);
+  white-space:nowrap;padding-top:4px;
+}
+.tasting-cta{
+  text-align:center;margin-top:56px;
+  padding:48px;background:var(--ash);border-radius:2px;
+}
+.tasting-price-block{
+  font-family:'Cormorant Garamond',serif;
+  font-size:3rem;font-weight:400;color:var(--ivory);
+  margin-bottom:8px;
+}
+.tasting-price-note{font-size:.85rem;color:var(--sub);margin-bottom:28px;}
+.btn-tasting{
+  display:inline-block;
+  padding:15px 48px;background:var(--ember);color:#fff;
+  font-size:.78rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  border-radius:2px;transition:background .2s;
+}
+.btn-tasting:hover{background:var(--copper);}
+
+/* ===== BAR ===== */
+.bar-section{background:var(--bg);}
+.bar-grid{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:64px;align-items:center;
+}
+.bar-img img{
+  width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:2px;
+}
+.cocktail-list{
+  display:flex;flex-direction:column;gap:0;
+  margin-top:40px;
+}
+.cocktail{
+  display:flex;justify-content:space-between;align-items:flex-start;
+  padding:22px 0;border-bottom:1px solid var(--border);gap:16px;
+}
+.cocktail:last-child{border-bottom:none;}
+.cock-name{
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.2rem;font-weight:600;color:var(--text);margin-bottom:4px;
+}
+.cock-desc{font-size:.82rem;line-height:1.55;color:var(--sub);}
+.cock-price{
+  font-size:.9rem;font-weight:700;color:var(--text);
+  white-space:nowrap;
+}
+
+/* ===== GALLERY ===== */
+.gallery-section{background:var(--surface);padding:96px 0;}
+.gallery-header{padding:0 32px;margin-bottom:48px;}
+.gallery-mosaic{
+  display:grid;
+  grid-template-columns:repeat(6,1fr);
+  grid-template-rows:240px 240px;
+  gap:3px;
+}
+.gm-item{overflow:hidden;}
+.gm-item:nth-child(1){grid-column:span 3;grid-row:span 2;}
+.gm-item:nth-child(2){grid-column:span 2;}
+.gm-item:nth-child(3){grid-column:span 1;}
+.gm-item:nth-child(4){grid-column:span 1;}
+.gm-item:nth-child(5){grid-column:span 2;}
+.gm-item img{width:100%;height:100%;object-fit:cover;transition:transform .5s;}
+.gm-item:hover img{transform:scale(1.04);}
+
+/* ===== PRIVATE DINING ===== */
+.private-section{
+  background:var(--ember);
+  padding:80px 32px;text-align:center;
+}
+.private-inner{max-width:700px;margin:0 auto;}
+.private-eyebrow{
+  font-size:.7rem;font-weight:600;letter-spacing:.22em;
+  text-transform:uppercase;color:rgba(255,255,255,.65);
+  margin-bottom:16px;
+}
+.private-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(2.5rem,6vw,4rem);
+  font-weight:400;color:#fff;line-height:1.1;
+  margin-bottom:20px;
+}
+.private-desc{font-size:1rem;line-height:1.8;color:rgba(255,255,255,.8);margin-bottom:36px;}
+.btn-private{
+  display:inline-block;
+  padding:15px 44px;border:2px solid #fff;color:#fff;
+  font-size:.78rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  border-radius:2px;transition:background .2s,color .2s;
+}
+.btn-private:hover{background:#fff;color:var(--ember);}
+
+/* ===== REVIEWS ===== */
+.reviews-section{background:var(--bg);}
+.reviews-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:2px;margin-top:56px;
+}
+.review-card{
+  background:var(--card);padding:40px 32px;
+  border-top:2px solid transparent;
+  transition:border-top-color .2s;
+}
+.review-card:hover{border-top-color:var(--ember);}
+.review-pub{
+  font-family:'DM Mono',monospace;
+  font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--copper);margin-bottom:20px;
+}
+.review-quote{
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.15rem;font-style:italic;line-height:1.8;
+  color:var(--text);margin-bottom:24px;
+}
+.review-author{
+  font-size:.78rem;font-weight:600;letter-spacing:.06em;color:var(--sub);
+}
+
+/* ===== RESERVATION ===== */
+#reservation{background:var(--charcoal);padding:96px 32px;}
+.res-inner{max-width:860px;margin:0 auto;}
+.res-header{margin-bottom:56px;}
+.res-form{
+  display:grid;grid-template-columns:1fr 1fr;gap:20px;
+}
+.form-group{display:flex;flex-direction:column;gap:8px;}
+.form-group.full{grid-column:span 2;}
+.form-group label{
+  font-size:.72rem;font-weight:600;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--muted);
+}
+.form-group input,
+.form-group select,
+.form-group textarea{
+  padding:14px 18px;
+  background:var(--ash);
+  border:1px solid var(--border);
+  border-radius:2px;color:var(--ivory);
+  font-size:.9rem;font-family:'DM Sans',sans-serif;
+  transition:border-color .2s;
+}
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus{outline:none;border-color:var(--ember);}
+.form-group select option{background:var(--ash);}
+.form-group textarea{resize:vertical;min-height:110px;}
+.btn-submit{
+  grid-column:span 2;
+  padding:18px;background:var(--ember);color:#fff;
+  font-size:.78rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  border-radius:2px;transition:background .2s;margin-top:8px;
+}
+.btn-submit:hover{background:var(--copper);}
+
+/* ===== CONTACT STRIP ===== */
+.contact-strip{
+  background:var(--ash);
+  border-top:1px solid var(--border);
+  padding:56px 32px;
+}
+.cs-inner{
+  max-width:1280px;margin:0 auto;
+  display:grid;grid-template-columns:repeat(4,1fr);
+  gap:40px;
+}
+.cs-block .cs-label{
+  font-family:'DM Mono',monospace;
+  font-size:.65rem;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--ember);margin-bottom:10px;
+}
+.cs-block .cs-value{
+  font-size:.92rem;line-height:1.65;color:var(--sub);
+}
+
+/* ===== FOOTER ===== */
+footer{
+  background:var(--charcoal);
+  border-top:1px solid var(--border);
+  padding:56px 32px 32px;
+}
+.footer-inner{max-width:1280px;margin:0 auto;}
+.footer-top{
+  display:grid;grid-template-columns:2fr 1fr 1fr 1fr;
+  gap:48px;margin-bottom:48px;
+}
+.footer-wordmark{
+  font-family:'Cormorant Garamond',serif;
+  font-size:2rem;letter-spacing:.25em;color:var(--ivory);
+  margin-bottom:14px;
+}
+.footer-wordmark em{font-style:normal;color:var(--ember);}
+.footer-tagline{font-size:.85rem;line-height:1.75;color:var(--muted);max-width:280px;}
+.footer-heading{
+  font-family:'DM Mono',monospace;
+  font-size:.65rem;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--ember);margin-bottom:18px;
+}
+.footer-links{list-style:none;display:flex;flex-direction:column;gap:12px;}
+.footer-links a{font-size:.85rem;color:var(--muted);transition:color .2s;}
+.footer-links a:hover{color:var(--ivory);}
+.footer-bottom{
+  padding-top:28px;border-top:1px solid var(--border);
+  display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;
+}
+.footer-copy{font-size:.78rem;color:var(--muted);}
+.footer-credit{font-size:.72rem;color:rgba(255,255,255,.2);}
+
+/* ===== FLOAT CTA ===== */
+.float-cta{
+  position:fixed;bottom:28px;right:28px;z-index:90;
+  padding:13px 26px;
+  background:transparent;color:var(--ember);
+  border:1px solid var(--ember);
+  font-size:.75rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+  border-radius:2px;box-shadow:0 4px 20px rgba(0,0,0,.3);
+  backdrop-filter:blur(8px);
+  background:rgba(20,18,16,.7);
+  transition:opacity .3s,transform .3s,background .2s,color .2s;
+}
+.float-cta:hover{background:var(--ember);color:#fff;}
+.float-cta.hidden{opacity:0;pointer-events:none;transform:translateY(10px);}
+
+/* ===== SCROLL REVEAL ===== */
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .7s,transform .7s;}
+.reveal.visible{opacity:1;transform:none;}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:960px){
+  .nav-links{display:none;}
+  .btn-reserve{display:none;}
+  .hamburger{display:flex;}
+  .hero-meta{display:none;}
+  .exp-grid,.bar-grid,.reviews-grid{grid-template-columns:1fr;}
+  .menu-featured,.menu-row{grid-template-columns:1fr;}
+  .gallery-mosaic{grid-template-columns:repeat(2,1fr);grid-template-rows:auto;}
+  .gm-item:nth-child(1){grid-column:span 2;grid-row:span 1;}
+  .gm-item:nth-child(n){grid-column:span 1;}
+  .res-form{grid-template-columns:1fr;}
+  .form-group.full,.btn-submit{grid-column:span 1;}
+  .cs-inner{grid-template-columns:repeat(2,1fr);}
+  .footer-top{grid-template-columns:1fr 1fr;}
+}
+@media(max-width:580px){
+  section{padding:64px 20px;}
+  .menu-tabs .tab-btn{padding:12px 18px;}
+  .gallery-mosaic{grid-template-columns:1fr;grid-template-rows:auto;}
+  .gm-item:nth-child(n){grid-column:span 1;}
+  .course{grid-template-columns:36px 1fr auto;}
+  .cs-inner{grid-template-columns:1fr;}
+  .footer-top{grid-template-columns:1fr;}
+  .float-cta{display:none;}
+}
+</style>
+</head>
+<body>
+
+<!-- LOADER -->
+<div id="loader">
+  <div class="loader-wordmark">EMBER</div>
+  <div class="loader-tagline">Modern BBQ Bar</div>
+  <div class="ember-anim">
+    <div class="em-dot"></div>
+    <div class="em-dot"></div>
+    <div class="em-dot"></div>
+    <div class="em-dot"></div>
+    <div class="em-dot"></div>
+  </div>
+</div>
+
+<!-- NAVBAR -->
+<nav id="navbar">
+  <div class="nav-inner">
+    <div class="nav-logo">E<em>M</em>BER</div>
+    <ul class="nav-links">
+      <li><a href="#experience">Experience</a></li>
+      <li><a href="#menu">Menu</a></li>
+      <li><a href="#tasting">Tasting Menu</a></li>
+      <li><a href="#bar">Bar</a></li>
+      <li><a href="#private">Private Dining</a></li>
+      <li><a href="#reservation">Reserve</a></li>
+    </ul>
+    <div class="nav-actions">
+      <button class="btn-mode" id="modeBtn" title="Toggle light mode">&#9728;</button>
+      <a href="#reservation" class="btn-reserve">Reserve</a>
+      <button class="hamburger" id="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</nav>
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#experience" onclick="closeMobile()">Experience</a>
+  <a href="#menu" onclick="closeMobile()">Menu</a>
+  <a href="#tasting" onclick="closeMobile()">Tasting Menu</a>
+  <a href="#bar" onclick="closeMobile()">Bar</a>
+  <a href="#private" onclick="closeMobile()">Private Dining</a>
+  <a href="#reservation" onclick="closeMobile()">Reserve</a>
+</div>
+
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="hero-bg"></div>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <div class="hero-eyebrow">New York City &bull; Tribeca &bull; Est. 2018</div>
+    <h1 class="hero-title">Fire<br>Reimagined<em>.</em></h1>
+    <p class="hero-desc">Where the ancient craft of smoke meets the precision of a modern kitchen. Ember is a BBQ bar for people who take their food seriously.</p>
+    <div class="hero-ctas">
+      <a href="#tasting" class="cta-filled">Tasting Menu</a>
+      <a href="#menu" class="cta-outline">A La Carte</a>
+    </div>
+  </div>
+  <div class="hero-meta">
+    <div class="hero-meta-item">Open Tue &ndash; Sun</div>
+    <div class="hero-meta-item">5:30 PM &mdash; Late</div>
+    <div class="hero-meta-item">Tribeca, NYC</div>
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section id="experience">
+  <div class="section-inner">
+    <div class="exp-grid">
+      <div class="exp-img reveal">
+        <img src="https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=800&auto=format&fit=crop&q=80" alt="Ember interior" loading="lazy">
+        <div class="exp-label">Open Kitchen &bull; Live Fire</div>
+      </div>
+      <div class="exp-text reveal">
+        <div class="eyebrow">The Concept</div>
+        <h2 class="heading">Smoke is an<br><em>ingredient</em></h2>
+        <p class="sub">Ember began with one question: what happens when you apply fine dining technique to American barbecue? The answer is a restaurant that respects the pit and the plate equally.</p>
+        <div class="exp-features">
+          <div class="exp-feat">
+            <div class="feat-icon">🔥</div>
+            <div class="feat-title">Live Fire Kitchen</div>
+            <div class="feat-desc">Open hearth visible from every seat. Guests watch every cut finish over the fire.</div>
+          </div>
+          <div class="exp-feat">
+            <div class="feat-icon">🪵</div>
+            <div class="feat-title">Single-Origin Wood</div>
+            <div class="feat-desc">White oak from Pennsylvania. Apple from the Hudson Valley. Sourced by season.</div>
+          </div>
+          <div class="exp-feat">
+            <div class="feat-icon">🥩</div>
+            <div class="feat-title">Heritage Breeds</div>
+            <div class="feat-desc">Waygu, Berkshire pork, pasture-raised poultry. Every protein named and sourced.</div>
+          </div>
+          <div class="exp-feat">
+            <div class="feat-icon">🍷</div>
+            <div class="feat-title">Smoke &amp; Wine</div>
+            <div class="feat-desc">A 200-bottle list curated specifically around smoked and charred flavour profiles.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- MENU -->
+<section class="menu-section" id="menu">
+  <div class="section-inner">
+    <div class="eyebrow">A La Carte</div>
+    <h2 class="heading">The Menu</h2>
+    <p class="sub">Every dish is built around fire. Sides are designed to complement smoke, not compete with it.</p>
+    <div class="menu-tabs" style="margin-top:48px;">
+      <button class="tab-btn active" onclick="switchTab('fire')">From the Fire</button>
+      <button class="tab-btn" onclick="switchTab('starters')">Starters</button>
+      <button class="tab-btn" onclick="switchTab('sides')">Sides</button>
+      <button class="tab-btn" onclick="switchTab('desserts')">Desserts</button>
+    </div>
+
+    <!-- FROM THE FIRE -->
+    <div class="tab-panel active" id="tab-fire">
+      <div class="menu-featured">
+        <div class="menu-card reveal">
+          <img class="menu-card-img" src="https://images.unsplash.com/photo-1529193591184-b1d58069ecdd?w=700&auto=format&fit=crop&q=80" alt="Wagyu Brisket">
+          <div class="menu-card-body">
+            <div class="mc-tag">Signature</div>
+            <div class="mc-name">Wagyu Brisket</div>
+            <div class="mc-desc">A5 Wagyu whole packer brisket, smoked 16 hours over white oak. Sliced tableside. Served with smoked bone marrow butter and fermented jalapeño relish.</div>
+            <div class="mc-footer">
+              <div class="mc-price">$58 / 8oz</div>
+              <div class="mc-note">16h smoke</div>
+            </div>
+          </div>
+        </div>
+        <div class="menu-card reveal">
+          <img class="menu-card-img" src="https://images.unsplash.com/photo-1544025162-d76694265947?w=700&auto=format&fit=crop&q=80" alt="Short Rib">
+          <div class="menu-card-body">
+            <div class="mc-tag">Chef's Pick</div>
+            <div class="mc-name">Heritage Short Rib</div>
+            <div class="mc-desc">Single bone short rib from Creekstone Farms, Kansas. 12-hour smoke, rested 2 hours, finished over live fire. Black garlic jus, pickled red onion ash.</div>
+            <div class="mc-footer">
+              <div class="mc-price">$52</div>
+              <div class="mc-note">12h smoke</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="menu-row">
+        <div class="menu-card reveal">
+          <img class="menu-card-img" src="https://images.unsplash.com/photo-1600891964092-4316c288032e?w=500&auto=format&fit=crop&q=80" alt="Berkshire Pork">
+          <div class="menu-card-body">
+            <div class="mc-tag">Heritage Pork</div>
+            <div class="mc-name">Berkshire St. Louis Ribs</div>
+            <div class="mc-desc">Heritage Berkshire pork ribs, apple wood, 6 hours. Ember's brown butter glaze. Pickled watermelon rind.</div>
+            <div class="mc-footer">
+              <div class="mc-price">$44 / half rack</div>
+              <div class="mc-note">Apple wood</div>
+            </div>
+          </div>
+        </div>
+        <div class="menu-card reveal">
+          <img class="menu-card-img" src="https://images.unsplash.com/photo-1558030006-450675393462?w=500&auto=format&fit=crop&q=80" alt="Sausage">
+          <div class="menu-card-body">
+            <div class="mc-tag">House Made</div>
+            <div class="mc-name">Ember Sausage Duo</div>
+            <div class="mc-desc">Two house sausages: smoked chorizo verde and aged cheddar-bratwurst. Grain mustard, charred cipollini onion.</div>
+            <div class="mc-footer">
+              <div class="mc-price">$28</div>
+              <div class="mc-note">Made daily</div>
+            </div>
+          </div>
+        </div>
+        <div class="menu-card reveal">
+          <img class="menu-card-img" src="https://images.unsplash.com/photo-1565299507177-b0ac66763828?w=500&auto=format&fit=crop&q=80" alt="Smoked Chicken">
+          <div class="menu-card-body">
+            <div class="mc-tag">Poultry</div>
+            <div class="mc-name">Split Roasted Chicken</div>
+            <div class="mc-desc">Pasture-raised half bird, brined 24 hours, smoked and finished on the hearth. Herb chimichurri, lemon confit.</div>
+            <div class="mc-footer">
+              <div class="mc-price">$36</div>
+              <div class="mc-note">Free-range</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STARTERS -->
+    <div class="tab-panel" id="tab-starters">
+      <div class="menu-list">
+        <div class="list-item reveal">
+          <div class="li-info">
+            <div class="li-name">Smoked Bone Marrow</div>
+            <div class="li-desc">Roasted beef marrow, chimichurri gremolata, charred sourdough, Maldon sea salt</div>
+          </div>
+          <div class="li-price">$22</div>
+        </div>
+        <div class="list-item reveal">
+          <div class="li-info">
+            <div class="li-name">Ember Tartare</div>
+            <div class="li-desc">Hand-cut Wagyu beef, smoked egg yolk, smoked oyster aioli, crispy shallot, rye cracker</div>
+          </div>
+          <div class="li-price">$26</div>
+        </div>
+        <div class="list-item reveal">
+          <div class="li-info">
+            <div class="li-name">Charred Octopus</div>
+            <div class="li-desc">Sous-vide then finished over live fire, romesco, preserved lemon, piquillo oil, smoked paprika</div>
+          </div>
+          <div class="li-price">$24</div>
+        </div>
+        <div class="list-item reveal">
+          <div class="li-info">
+            <div class="li-name">Wood-Roasted Oysters</div>
+            <div class="li-desc">East Coast oysters, roasted over white oak, compound smoked butter, mignonette granita &mdash; half dozen</div>
+          </div>
+          <div class="li-price">$24</div>
+        </div>
+        <div class="list-item reveal">
+          <div class="li-info">
+            <div class="li-name">Smoked Deviled Eggs</div>
+            <div class="li-desc">Six halves, cold-smoked yolk filling, crispy brisket, pickled jalapeño, chive oil</div>
+          </div>
+          <div class="li-price">$16</div>
+        </div>
+        <div class="list-item reveal">
+          <div class="li-info">
+            <div class="li-name">BBQ Biscuits</div>
+            <div class="li-desc">Buttermilk biscuits, whipped smoked lard butter, house pepper jelly, sliced brisket on the side</div>
+          </div>
+          <div class="li-price">$14</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SIDES -->
+    <div class="tab-panel" id="tab-sides">
+      <div class="menu-list">
+        <div class="list-item reveal">
+          <div class="li-info">
+            <div class="li-name">Ember Mac &amp; Cheese</div>
+            <div class="li-desc">Three-cheese sauce, bronze-cut bucatini, smoked in the pit for 30 minutes, panko crust</div>
+          </div>
+          <div class="li-price">$16</div>
+        </div>
+        <div class="list-item reveal">
+          <div class="li-info">
+            <div class="li-name">Charred Brussels</div>
+            <div class="li-desc">Roasted on the hearth, fish sauce caramel, crispy pork belly, apple and fennel slaw</div>
+          </div>
+          <div class="li-price">$14</div>
+        </div>
+        <div class="list-item reveal">
+          <div class="li-info">
+            <div class="li-name">Wood-Roasted Corn</div>
+            <div class="li-desc">Whole ear, smoked butter, chipotle mayo, cotija, lime, Aleppo pepper flake</div>
+          </div>
+          <div class="li-price">$12</div>
+        </div>
+        <div class="list-item reveal">
+          <div class="li-info">
+            <div class="li-name">Smoked Fingerling Potatoes</div>
+            <div class="li-desc">Confit fingerlings, smoked sour cream, chive, crispy chicken skin, truffle salt</div>
+          </div>
+          <div class="li-price">$14</div>
+        </div>
+        <div class="list-item reveal">
+          <div class="li-info">
+            <div class="li-name">Pit Beans</div>
+            <div class="li-desc">Slow-cooked heirloom beans in brisket drippings, smoked tomato, guajillo chile, pork belly</div>
+          </div>
+          <div class="li-price">$12</div>
+        </div>
+        <div class="list-item reveal">
+          <div class="li-info">
+            <div class="li-name">Skillet Cornbread</div>
+            <div class="li-desc">House-cast iron cornbread, cheddar and charred jalapeño, smoked honey butter</div>
+          </div>
+          <div class="li-price">$10</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DESSERTS -->
+    <div class="tab-panel" id="tab-desserts">
+      <div class="menu-list">
+        <div class="list-item reveal">
+          <div class="li-info">
+            <div class="li-name">Smoked Chocolate Lava Cake</div>
+            <div class="li-desc">Valrhona dark chocolate, smoked in the pit, warm centre, smoked salt caramel, vanilla bean ice cream</div>
+          </div>
+          <div class="li-price">$16</div>
+        </div>
+        <div class="list-item reveal">
+          <div class="li-info">
+            <div class="li-name">Bourbon Peach Cobbler</div>
+            <div class="li-desc">Wood-roasted peaches, brown butter biscuit topping, bourbon caramel, whipped crème fraiche</div>
+          </div>
+          <div class="li-price">$14</div>
+        </div>
+        <div class="list-item reveal">
+          <div class="li-info">
+            <div class="li-name">Brown Butter Ice Cream</div>
+            <div class="li-desc">Three scoops, house-churned, rotating flavour. Ask your server for today's — always something unexpected.</div>
+          </div>
+          <div class="li-price">$12</div>
+        </div>
+        <div class="list-item reveal">
+          <div class="li-info">
+            <div class="li-name">Cheese Board</div>
+            <div class="li-desc">Selection of three American artisan cheeses, smoked honey, walnut brittle, fig mostarda, seeded crackers</div>
+          </div>
+          <div class="li-price">$24</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TASTING MENU -->
+<section class="tasting-section" id="tasting">
+  <div class="tasting-inner">
+    <div class="tasting-header">
+      <div class="eyebrow">Chef's Table</div>
+      <h2 class="heading" style="color:var(--ivory);font-size:clamp(2.5rem,6vw,4.5rem);">The <em>Ember</em><br>Tasting Menu</h2>
+      <p class="sub" style="margin:0 auto;color:var(--warm);">A seven-course journey through smoke, fire, and American flavour. Available for the full table only.</p>
+    </div>
+    <div class="course-list">
+      <div class="course reveal">
+        <div class="course-num">01</div>
+        <div class="course-info">
+          <div class="course-name">Amuse-Bouche</div>
+          <div class="course-desc">Smoked deviled egg, brisket crisp, charred chive oil. One bite. Sets the tone.</div>
+          <div class="course-pairing">No pairing &mdash; complimentary</div>
+        </div>
+        <div class="course-price">&mdash;</div>
+      </div>
+      <div class="course reveal">
+        <div class="course-num">02</div>
+        <div class="course-info">
+          <div class="course-name">Cold-Smoked Wagyu Tartare</div>
+          <div class="course-desc">Hand-cut Wagyu, smoked yolk, oyster aioli, rye cracker, fresh horseradish snow.</div>
+          <div class="course-pairing">Pairing: 2022 Txakoli, Ameztoi, Basque Country</div>
+        </div>
+        <div class="course-price">&mdash;</div>
+      </div>
+      <div class="course reveal">
+        <div class="course-num">03</div>
+        <div class="course-info">
+          <div class="course-name">Wood-Roasted Oysters</div>
+          <div class="course-desc">Three East Coast oysters on the hearth, smoked butter, mignonette granita, champagne vinegar gel.</div>
+          <div class="course-pairing">Pairing: NV Champagne, Billecart-Salmon Blanc de Blancs</div>
+        </div>
+        <div class="course-price">&mdash;</div>
+      </div>
+      <div class="course reveal">
+        <div class="course-num">04</div>
+        <div class="course-info">
+          <div class="course-name">Smoked Bone Marrow &amp; Sourdough</div>
+          <div class="course-desc">Roasted femur, chimichurri gremolata, charred sourdough made in-house, Maldon sea salt flake.</div>
+          <div class="course-pairing">Pairing: 2020 Barolo, Vietti, Piedmont</div>
+        </div>
+        <div class="course-price">&mdash;</div>
+      </div>
+      <div class="course reveal">
+        <div class="course-num">05</div>
+        <div class="course-info">
+          <div class="course-name">Heritage Short Rib</div>
+          <div class="course-desc">Single bone, 12-hour smoke, hearth finish. Black garlic jus, pickled red onion ash, smoked potato fondant.</div>
+          <div class="course-pairing">Pairing: 2019 Napa Valley Cabernet, Stag's Leap Wine Cellars</div>
+        </div>
+        <div class="course-price">&mdash;</div>
+      </div>
+      <div class="course reveal">
+        <div class="course-num">06</div>
+        <div class="course-info">
+          <div class="course-name">A5 Wagyu Brisket</div>
+          <div class="course-desc">The centrepiece. 4oz of point cut, sliced tableside from the brisket smoked since 4 AM. Smoked bone marrow butter.</div>
+          <div class="course-pairing">Pairing: 2018 Pomerol, Chateau La Conseillante</div>
+        </div>
+        <div class="course-price">&mdash;</div>
+      </div>
+      <div class="course reveal">
+        <div class="course-num">07</div>
+        <div class="course-info">
+          <div class="course-name">Smoked Chocolate &amp; Bourbon</div>
+          <div class="course-desc">Warm Valrhona lava cake, smoked salt caramel sauce, Maker's Mark ice cream, cocoa nibs.</div>
+          <div class="course-pairing">Pairing: 2021 Banyuls Rimage, Domaine du Mas Blanc</div>
+        </div>
+        <div class="course-price">&mdash;</div>
+      </div>
+    </div>
+    <div class="tasting-cta">
+      <div class="tasting-price-block">$185 <em style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.5rem;color:var(--sub);">per person</em></div>
+      <div class="tasting-price-note">Wine pairing +$95 per person &bull; Non-alcoholic pairing +$55 per person &bull; Minimum 2 guests</div>
+      <a href="#reservation" class="btn-tasting">Reserve the Chef's Table</a>
+    </div>
+  </div>
+</section>
+
+<!-- BAR -->
+<section class="bar-section" id="bar">
+  <div class="section-inner">
+    <div class="bar-grid">
+      <div class="bar-img reveal">
+        <img src="https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=800&auto=format&fit=crop&q=80" alt="Ember Bar" loading="lazy">
+      </div>
+      <div class="bar-text reveal">
+        <div class="eyebrow">The Bar Program</div>
+        <h2 class="heading">Smoke in<br><em>Every Glass</em></h2>
+        <p class="sub">Our bar program borrows from the kitchen. Every cocktail is touched by smoke, char, or fire-kissed ingredients. The result is a list unlike anything else in the city.</p>
+        <div class="cocktail-list">
+          <div class="cocktail">
+            <div>
+              <div class="cock-name">The Pitmaster</div>
+              <div class="cock-desc">Mezcal, cold-smoked bourbon, Benedictine, Angostura, smoked cherry</div>
+            </div>
+            <div class="cock-price">$22</div>
+          </div>
+          <div class="cocktail">
+            <div>
+              <div class="cock-name">Charred Manhattan</div>
+              <div class="cock-desc">Rye whiskey aged in charred oak, sweet vermouth, laphroaig rinse, Luxardo</div>
+            </div>
+            <div class="cock-price">$21</div>
+          </div>
+          <div class="cocktail">
+            <div>
+              <div class="cock-name">Ember Mule</div>
+              <div class="cock-desc">Smoked vodka, ginger beer, charred pineapple, burnt lime, black salt rim</div>
+            </div>
+            <div class="cock-price">$18</div>
+          </div>
+          <div class="cocktail">
+            <div>
+              <div class="cock-name">Smoke Signal</div>
+              <div class="cock-desc">Reposado tequila, mezcal, activated charcoal simple syrup, hibiscus, smoked ice sphere</div>
+            </div>
+            <div class="cock-price">$20</div>
+          </div>
+          <div class="cocktail">
+            <div>
+              <div class="cock-name">Zero Proof: Ember Garden</div>
+              <div class="cock-desc">Cold-pressed grapefruit, house smoked rosemary syrup, fever tree soda, thyme tincture</div>
+            </div>
+            <div class="cock-price">$14</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- GALLERY -->
+<section class="gallery-section" id="gallery">
+  <div class="gallery-header">
+    <div class="eyebrow">Inside Ember</div>
+    <h2 class="heading">The Atmosphere</h2>
+  </div>
+  <div class="gallery-mosaic">
+    <div class="gm-item">
+      <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=900&auto=format&fit=crop&q=80" alt="Ember dining" loading="lazy">
+    </div>
+    <div class="gm-item">
+      <img src="https://images.unsplash.com/photo-1529193591184-b1d58069ecdd?w=600&auto=format&fit=crop&q=80" alt="Brisket" loading="lazy">
+    </div>
+    <div class="gm-item">
+      <img src="https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=400&auto=format&fit=crop&q=80" alt="Bar" loading="lazy">
+    </div>
+    <div class="gm-item">
+      <img src="https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=400&auto=format&fit=crop&q=80" alt="Kitchen" loading="lazy">
+    </div>
+    <div class="gm-item">
+      <img src="https://images.unsplash.com/photo-1544025162-d76694265947?w=600&auto=format&fit=crop&q=80" alt="Beef ribs" loading="lazy">
+    </div>
+  </div>
+</section>
+
+<!-- PRIVATE DINING -->
+<section class="private-section" id="private">
+  <div class="private-inner">
+    <div class="private-eyebrow">Private Events</div>
+    <h2 class="private-title">The Coal Room</h2>
+    <p class="private-desc">A private dining room for up to 18 guests, set around a second live-fire hearth. Custom menus, dedicated sommelier, and a private entrance off the alley. Available seven nights a week.</p>
+    <a href="#reservation" class="btn-private">Enquire About Private Dining</a>
+  </div>
+</section>
+
+<!-- REVIEWS -->
+<section class="reviews-section" id="reviews">
+  <div class="section-inner">
+    <div class="eyebrow">Press &amp; Guests</div>
+    <h2 class="heading">What They're<br><em>Saying</em></h2>
+    <div class="reviews-grid">
+      <div class="review-card reveal">
+        <div class="review-pub">New York Times &bull; 2023</div>
+        <p class="review-quote">"Ember does something that should be impossible: it makes barbecue feel like fine dining without removing a single thing that makes barbecue great. The wagyu brisket alone justifies the trip downtown."</p>
+        <div class="review-author">Food critic, NYT Dining</div>
+      </div>
+      <div class="review-card reveal">
+        <div class="review-pub">Eater NY &bull; 2024</div>
+        <p class="review-quote">"The tasting menu is a masterclass in restraint. Seven courses built around fire and smoke, none of them overwrought. The bone marrow course is the best thing I ate in New York last year."</p>
+        <div class="review-author">Senior Editor, Eater NY</div>
+      </div>
+      <div class="review-card reveal">
+        <div class="review-pub">Guest Review &bull; Google</div>
+        <p class="review-quote">"We booked the Coal Room for our team dinner. Chef came out mid-meal and walked us through the tasting menu. The short rib was extraordinary. We have a standing quarterly booking now."</p>
+        <div class="review-author">Rachel M. &bull; Corporate client</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- RESERVATION -->
+<section id="reservation">
+  <div class="res-inner">
+    <div class="res-header">
+      <div class="eyebrow">Book Your Table</div>
+      <h2 class="heading">Reserve at<br><em>Ember</em></h2>
+      <p class="sub">Walk-ins welcome at the bar. Dining room seats are reserved. Tasting menu is by reservation only.</p>
+    </div>
+    <form class="res-form" onsubmit="return false;">
+      <div class="form-group">
+        <label>First Name</label>
+        <input type="text" placeholder="Your first name">
+      </div>
+      <div class="form-group">
+        <label>Last Name</label>
+        <input type="text" placeholder="Your last name">
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" placeholder="you@email.com">
+      </div>
+      <div class="form-group">
+        <label>Phone</label>
+        <input type="tel" placeholder="+1 (212) 000-0000">
+      </div>
+      <div class="form-group">
+        <label>Date</label>
+        <input type="date">
+      </div>
+      <div class="form-group">
+        <label>Time</label>
+        <select>
+          <option>5:30 PM</option>
+          <option>6:00 PM</option>
+          <option>7:00 PM</option>
+          <option>7:30 PM</option>
+          <option>8:30 PM</option>
+          <option>9:00 PM</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Guests</label>
+        <select>
+          <option>1 guest</option>
+          <option>2 guests</option>
+          <option>3 guests</option>
+          <option>4 guests</option>
+          <option>5 guests</option>
+          <option>6+ guests</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Experience</label>
+        <select>
+          <option>A La Carte (Dining Room)</option>
+          <option>Tasting Menu (Chef's Table)</option>
+          <option>Bar Seating</option>
+          <option>Private Dining (Coal Room)</option>
+        </select>
+      </div>
+      <div class="form-group full">
+        <label>Special Requests</label>
+        <textarea placeholder="Dietary requirements, allergies, occasions, or anything we should know..."></textarea>
+      </div>
+      <button class="btn-submit" type="submit">Request Reservation</button>
+    </form>
+  </div>
+</section>
+
+<!-- CONTACT STRIP -->
+<div class="contact-strip">
+  <div class="cs-inner">
+    <div class="cs-block">
+      <div class="cs-label">Address</div>
+      <div class="cs-value">47 Harrison Street<br>Tribeca, New York<br>NY 10013</div>
+    </div>
+    <div class="cs-block">
+      <div class="cs-label">Hours</div>
+      <div class="cs-value">Tuesday &ndash; Sunday<br>Dinner: 5:30 PM &ndash; Late<br>Bar open from 5:00 PM</div>
+    </div>
+    <div class="cs-block">
+      <div class="cs-label">Contact</div>
+      <div class="cs-value">
+        <a href="tel:+12125550199" style="color:inherit;display:block;">+1 (212) 555-0199</a>
+        <a href="mailto:hello@embertribeca.com" style="color:inherit;display:block;margin-top:4px;">hello@embertribeca.com</a>
+      </div>
+    </div>
+    <div class="cs-block">
+      <div class="cs-label">Getting Here</div>
+      <div class="cs-value">1 / 2 / 3 Franklin St<br>A / C / E Chambers St<br>Valet available Fri &ndash; Sun</div>
+    </div>
+  </div>
+</div>
+
+<!-- MAP -->
+<div style="height:350px;overflow:hidden;">
+  <iframe
+    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3023.0!2d-74.0085!3d40.7194!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNDDCsDQzJzA5LjgiTiA3NMKwMDAnMzAuNiJX!5e0!3m2!1sen!2sus!4v1234567890"
+    width="100%" height="350" style="border:0;display:block;filter:grayscale(60%);" allowfullscreen="" loading="lazy">
+  </iframe>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div>
+        <div class="footer-wordmark">E<em>M</em>BER</div>
+        <p class="footer-tagline">Modern BBQ bar. Live fire kitchen. Tribeca, New York City. Open Tuesday through Sunday from 5:30 PM.</p>
+      </div>
+      <div>
+        <div class="footer-heading">Menu</div>
+        <ul class="footer-links">
+          <li><a href="#menu">From the Fire</a></li>
+          <li><a href="#menu">Starters</a></li>
+          <li><a href="#menu">Sides</a></li>
+          <li><a href="#tasting">Tasting Menu</a></li>
+          <li><a href="#bar">Bar</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-heading">Visit</div>
+        <ul class="footer-links">
+          <li><a href="#reservation">Reserve a Table</a></li>
+          <li><a href="#private">Private Dining</a></li>
+          <li><a href="#experience">Our Story</a></li>
+          <li><a href="#gallery">Gallery</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-heading">Contact</div>
+        <ul class="footer-links">
+          <li><a href="tel:+12125550199">+1 (212) 555-0199</a></li>
+          <li><a href="mailto:hello@embertribeca.com">hello@embertribeca.com</a></li>
+          <li><a href="#">47 Harrison Street</a></li>
+          <li><a href="#">Tribeca, NY 10013</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-copy">&copy; 2024 Ember. All rights reserved.</div>
+      <div class="footer-credit">Template by Vinayak Ganiger &times; Claude (Anthropic AI)</div>
+    </div>
+  </div>
+</footer>
+
+<!-- FLOAT CTA -->
+<a href="#reservation" class="float-cta" id="floatCta">Reserve a Table</a>
+
+<script>
+// === LOADER ===
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    document.getElementById('loader').classList.add('hidden');
+  }, 1400);
+});
+
+// === DARK/LIGHT MODE — starts DARK, toggle to LIGHT ===
+const modeBtn = document.getElementById('modeBtn');
+const body = document.body;
+const saved = localStorage.getItem('ember_light');
+if (saved === 'true') {
+  body.classList.add('light-mode');
+  modeBtn.textContent = '🌙';
+} else {
+  modeBtn.textContent = '☀️';
+}
+modeBtn.addEventListener('click', () => {
+  const isLight = body.classList.toggle('light-mode');
+  localStorage.setItem('ember_light', isLight);
+  modeBtn.textContent = isLight ? '🌙' : '☀️';
+});
+
+// === NAVBAR SCROLL ===
+const navbar = document.getElementById('navbar');
+window.addEventListener('scroll', () => {
+  navbar.classList.toggle('scrolled', window.scrollY > 40);
+});
+
+// === MOBILE MENU ===
+const hamburger = document.getElementById('hamburger');
+const mobileMenu = document.getElementById('mobileMenu');
+hamburger.addEventListener('click', () => {
+  mobileMenu.classList.toggle('open');
+});
+function closeMobile() {
+  mobileMenu.classList.remove('open');
+}
+
+// === MENU TABS ===
+function switchTab(id) {
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.getAttribute('onclick').includes(id));
+  });
+  document.querySelectorAll('.tab-panel').forEach(p => {
+    p.classList.toggle('active', p.id === 'tab-' + id);
+  });
+}
+
+// === SCROLL REVEAL ===
+const revealObs = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      revealObs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.08 });
+document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
+
+// === FLOAT CTA ===
+const floatCta = document.getElementById('floatCta');
+const resSection = document.getElementById('reservation');
+const resObs = new IntersectionObserver((entries) => {
+  floatCta.classList.toggle('hidden', entries[0].isIntersecting);
+});
+resObs.observe(resSection);
+</script>
+</body>
+</html>
